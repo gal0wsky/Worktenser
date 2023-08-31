@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "241148877342",
+    "project_id": "worktenser",
+    "storage_bucket": "worktenser.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:241148877342:android:a59223ab2492a2a738ec0f",
+        "android_client_info": {
+          "package_name": "dev.gawlowski.worktenser"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "241148877342-uds2j0bgc3556107rpfsrtqc2n7jqh2i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANaKCzwnpohUbCsojd0RC6fXaPClj3ppQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "241148877342-uds2j0bgc3556107rpfsrtqc2n7jqh2i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
