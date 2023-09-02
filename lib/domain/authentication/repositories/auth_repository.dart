@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:worktenser/domain/authentication/models/user_model.dart';
 
 class AuthRepository {
@@ -31,6 +32,20 @@ class AuthRepository {
       await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
     } catch (_) {}
+  }
+
+  Future<firebase_auth.UserCredential?> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    final credential = firebase_auth.GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    return await _firebaseAuth.signInWithCredential(credential);
   }
 
   Future logOut() async {

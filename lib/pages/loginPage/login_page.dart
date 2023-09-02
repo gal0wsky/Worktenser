@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/config/colors.dart';
 import 'package:worktenser/cubits/login/login_cubit.dart';
 import 'package:worktenser/domain/authentication/repositories/auth_repository.dart';
+import 'package:worktenser/pages/loginPage/widgets/google_signin_button.dart';
 
 import 'widgets/email_input.dart';
 import 'widgets/login_button.dart';
@@ -38,41 +39,94 @@ class LoginForm extends StatelessWidget {
       listener: (context, state) {
         if (state.status == LoginStatus.error) {}
       },
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Worktenser',
-              style: TextStyle(
-                fontSize: 40,
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.bold,
-              ),
+      child: BlocBuilder<LoginCubit, LoginState>(
+        builder: (context, state) {
+          if (state.status == LoginStatus.error) {
+            return const Text('Something went wrong!');
+          }
+          if (state.status == LoginStatus.submitting) {
+            return const CircularProgressIndicator();
+          }
+          return const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 30.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Worktenser',
+                  style: TextStyle(
+                    fontSize: 40,
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  height: 120,
+                ),
+                EmailInput(),
+                SizedBox(
+                  height: 16,
+                ),
+                PasswordInput(),
+                SizedBox(
+                  height: 50,
+                ),
+                LoginButton(),
+                SizedBox(
+                  height: 8,
+                ),
+                GoogleSignInButton(),
+                SizedBox(
+                  height: 8,
+                ),
+                SignupButton(),
+                SizedBox(
+                  height: 8,
+                ),
+              ],
             ),
-            SizedBox(
-              height: 120,
-            ),
-            EmailInput(),
-            SizedBox(
-              height: 16,
-            ),
-            PasswordInput(),
-            SizedBox(
-              height: 50,
-            ),
-            LoginButton(),
-            SizedBox(
-              height: 8,
-            ),
-            SignupButton(),
-            SizedBox(
-              height: 8,
-            ),
-          ],
-        ),
+          );
+        },
       ),
+      // child: const Padding(
+      //   padding: EdgeInsets.symmetric(horizontal: 30.0),
+      //   child: Column(
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: [
+      //       Text(
+      //         'Worktenser',
+      //         style: TextStyle(
+      //           fontSize: 40,
+      //           color: AppColors.textPrimary,
+      //           fontWeight: FontWeight.bold,
+      //         ),
+      //       ),
+      //       SizedBox(
+      //         height: 120,
+      //       ),
+      //       EmailInput(),
+      //       SizedBox(
+      //         height: 16,
+      //       ),
+      //       PasswordInput(),
+      //       SizedBox(
+      //         height: 50,
+      //       ),
+      //       LoginButton(),
+      //       SizedBox(
+      //         height: 8,
+      //       ),
+      //       GoogleSignInButton(),
+      //       SizedBox(
+      //         height: 8,
+      //       ),
+      //       SignupButton(),
+      //       SizedBox(
+      //         height: 8,
+      //       ),
+      //     ],
+      //   ),
+      // ),
     );
   }
 }
