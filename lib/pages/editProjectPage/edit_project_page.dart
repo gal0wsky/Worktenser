@@ -4,7 +4,6 @@ import 'package:worktenser/blocs/auth/auth_bloc.dart';
 import 'package:worktenser/config/colors.dart';
 import 'package:worktenser/cubits/projects/projects_cubit.dart';
 import 'package:worktenser/domain/projects/models/project_model.dart';
-import 'package:worktenser/domain/projects/repositories/projects_repository.dart';
 
 class EditProjectPage extends StatelessWidget {
   final Project project;

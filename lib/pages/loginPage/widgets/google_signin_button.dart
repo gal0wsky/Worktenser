@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:worktenser/config/colors.dart';
 import 'package:worktenser/cubits/login/login_cubit.dart';
 
 class GoogleSignInButton extends StatelessWidget {

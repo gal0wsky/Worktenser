@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/blocs/auth/auth_bloc.dart';
 import 'package:worktenser/config/colors.dart';
 import 'package:worktenser/cubits/projects/projects_cubit.dart';
-import 'package:worktenser/domain/projects/models/project_model.dart';
 import 'package:worktenser/pages/addProjectPage/add_project_page.dart';
 import 'package:worktenser/pages/projectDetailsPge/project_details_page.dart';
 
@@ -67,14 +66,6 @@ class HomePage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                // final project = Project(
-                //     userId: context.read<AuthBloc>().state.user.id,
-                //     name: 'test project',
-                //     description: 'this is my test project',
-                //     time: 0);
-
-                // context.read<ProjectsCubit>().addProject(project);
-
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const AddProjectPage()));
               },
@@ -155,47 +146,6 @@ class HomePage extends StatelessWidget {
                               );
                             },
                           ),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.center,
-                          //   children: [
-                          //     Text(
-                          //       context
-                          //           .read<ProjectsCubit>()
-                          //           .state
-                          //           .projects[index]
-                          //           .name,
-                          //       style: const TextStyle(
-                          //         color: AppColors.textPrimary,
-                          //         fontSize: 20,
-                          //       ),
-                          //     ),
-                          //     const SizedBox(
-                          //       width: 20,
-                          //     ),
-                          //     ElevatedButton(
-                          //       onPressed: () {
-                          //         context.read<ProjectsCubit>().deleteProject(
-                          //               context
-                          //                   .read<ProjectsCubit>()
-                          //                   .state
-                          //                   .projects[index],
-                          //             );
-
-                          //         context.read<ProjectsCubit>().loadProjects(
-                          //               context.read<AuthBloc>().state.user,
-                          //             );
-                          //       },
-                          //       style: ElevatedButton.styleFrom(
-                          //         fixedSize: const Size(20, 20),
-                          //         backgroundColor: AppColors.callToAction,
-                          //       ),
-                          //       child: const Icon(
-                          //         Icons.delete,
-                          //         size: 20,
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
                         ),
                       );
                     }),
