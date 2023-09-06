@@ -41,4 +41,23 @@ class ProjectsState extends Equatable {
       status: status,
     );
   }
+
+  ProjectsState update(
+      {required ProjectsStatus newStatus, required List<Project> newProjects}) {
+    return ProjectsState(
+        projects: newProjects,
+        projectsCount: newProjects.length,
+        projectsTime: _countProjectsTotalTime(newProjects),
+        status: newStatus);
+  }
+
+  int _countProjectsTotalTime(List<Project> projects) {
+    int time = 0;
+
+    for (var project in projects) {
+      time += project.time;
+    }
+
+    return time;
+  }
 }

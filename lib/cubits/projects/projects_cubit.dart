@@ -21,11 +21,10 @@ class ProjectsCubit extends Cubit<ProjectsState> {
     try {
       final projects = await _projectsRepository.loadProjects(user);
 
-      emit(state.copyWith(
-          projects: projects,
-          projectsCount: projects.length,
-          projectsTime: _countProjectsTotalTime(projects),
-          status: ProjectsStatus.success));
+      emit(state.update(
+        newStatus: ProjectsStatus.success,
+        newProjects: projects,
+      ));
     } catch (e) {
       emit(state.copyWith(status: ProjectsStatus.error));
       print(e);
@@ -40,7 +39,7 @@ class ProjectsCubit extends Cubit<ProjectsState> {
     try {
       final result = await _projectsRepository.addProject(project);
 
-      final newStatus = result ? ProjectsStatus.success : ProjectsStatus.error;
+      final newStatus = result ? ProjectsStatus.reload : ProjectsStatus.error;
 
       List<Project> projects = [];
 
@@ -49,11 +48,9 @@ class ProjectsCubit extends Cubit<ProjectsState> {
       }
       projects.add(project);
 
-      emit(state.copyWith(
-        status: newStatus,
-        projects: projects,
-        projectsCount: projects.length,
-        projectsTime: _countProjectsTotalTime(projects),
+      emit(state.update(
+        newStatus: newStatus,
+        newProjects: projects,
       ));
     } catch (e) {
       emit(state.copyWith(status: ProjectsStatus.error));
@@ -76,9 +73,9 @@ class ProjectsCubit extends Cubit<ProjectsState> {
           return proj.id == project.id ? project : proj;
         }).toList();
 
-        emit(state.copyWith(
-          status: ProjectsStatus.success,
-          projects: updatedProjects,
+        emit(state.update(
+          newStatus: ProjectsStatus.success,
+          newProjects: updatedProjects,
         ));
       }
     } catch (e) {
@@ -98,34 +95,14 @@ class ProjectsCubit extends Cubit<ProjectsState> {
       if (!result) {
         emit(state.copyWith(status: ProjectsStatus.error));
       } else {
-        List<Project> updatedProjects = [];
-
-        for (var proj in state.projects) {
-          if (proj.id != project.id) {
-            updatedProjects.add(proj);
-          }
-        }
-
         emit(state.copyWith(
-          status: ProjectsStatus.success,
-          projects: updatedProjects,
-          projectsCount: updatedProjects.length,
-          projectsTime: _countProjectsTotalTime(updatedProjects),
+          status: ProjectsStatus.reload,
+          projectsCount: state.projectsCount - 1,
         ));
       }
     } catch (e) {
       emit(state.copyWith(status: ProjectsStatus.error));
       print(e);
     }
-  }
-
-  int _countProjectsTotalTime(List<Project> projects) {
-    int time = 0;
-
-    for (var project in projects) {
-      time += project.time;
-    }
-
-    return time;
   }
 }
