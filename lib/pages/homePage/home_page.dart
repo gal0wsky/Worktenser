@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/blocs/auth/auth_bloc.dart';
 import 'package:worktenser/config/colors.dart';
+import 'package:worktenser/cubits/projects/projects_cubit.dart';
+import 'package:worktenser/domain/projects/models/project_model.dart';
+import 'package:worktenser/pages/addProjectPage/add_project_page.dart';
+import 'package:worktenser/pages/projectDetailsPge/project_details_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -16,6 +20,9 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const SizedBox(
+              height: 120,
+            ),
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -38,25 +45,164 @@ class HomePage extends StatelessWidget {
               ],
             ),
             const SizedBox(
-              height: 30,
+              height: 100,
             ),
             ElevatedButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(AppLogoutRequested());
-                },
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(
-                    200,
-                    40,
-                  ),
-                  backgroundColor: AppColors.callToAction,
+              onPressed: () {
+                context.read<AuthBloc>().add(AppLogoutRequested());
+              },
+              style: ElevatedButton.styleFrom(
+                fixedSize: const Size(
+                  200,
+                  40,
                 ),
-                child: const Text(
-                  'Logout',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
+                backgroundColor: AppColors.callToAction,
+              ),
+              child: const Text(
+                'Logout',
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // final project = Project(
+                //     userId: context.read<AuthBloc>().state.user.id,
+                //     name: 'test project',
+                //     description: 'this is my test project',
+                //     time: 0);
+
+                // context.read<ProjectsCubit>().addProject(project);
+
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const AddProjectPage()));
+              },
+              style: ElevatedButton.styleFrom(
+                fixedSize: const Size(
+                  200,
+                  40,
+                ),
+                backgroundColor: AppColors.callToAction,
+              ),
+              child: const Text('Add project'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                context
+                    .read<ProjectsCubit>()
+                    .loadProjects(context.read<AuthBloc>().state.user);
+              },
+              style: ElevatedButton.styleFrom(
+                fixedSize: const Size(
+                  200,
+                  40,
+                ),
+                backgroundColor: AppColors.callToAction,
+              ),
+              child: const Text('Load projects'),
+            ),
+            BlocConsumer<ProjectsCubit, ProjectsState>(
+                listener: (context, state) {
+              if (state.status == ProjectsStatus.reload) {
+                context
+                    .read<ProjectsCubit>()
+                    .loadProjects(context.read<AuthBloc>().state.user);
+              }
+            }, builder: (context, state) {
+              if (state.status == ProjectsStatus.initial) {
+                context.read<ProjectsCubit>().loadProjects(
+                      context.read<AuthBloc>().state.user,
+                    );
+                return const CircularProgressIndicator();
+              } else if (state.status == ProjectsStatus.error) {
+                return const Text('Something went wrong');
+              } else if (state.status == ProjectsStatus.reload) {
+                return const CircularProgressIndicator();
+              } else {
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount:
+                        context.read<ProjectsCubit>().state.projectsCount,
+                    shrinkWrap: true,
+                    itemBuilder: ((context, index) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 10,
+                          ),
+                          child: ListTile(
+                            title: Text(
+                              context
+                                  .read<ProjectsCubit>()
+                                  .state
+                                  .projects[index]
+                                  .name,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => DetailsPage(
+                                      project: context
+                                          .read<ProjectsCubit>()
+                                          .state
+                                          .projects[index]),
+                                ),
+                              );
+                            },
+                          ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.center,
+                          //   children: [
+                          //     Text(
+                          //       context
+                          //           .read<ProjectsCubit>()
+                          //           .state
+                          //           .projects[index]
+                          //           .name,
+                          //       style: const TextStyle(
+                          //         color: AppColors.textPrimary,
+                          //         fontSize: 20,
+                          //       ),
+                          //     ),
+                          //     const SizedBox(
+                          //       width: 20,
+                          //     ),
+                          //     ElevatedButton(
+                          //       onPressed: () {
+                          //         context.read<ProjectsCubit>().deleteProject(
+                          //               context
+                          //                   .read<ProjectsCubit>()
+                          //                   .state
+                          //                   .projects[index],
+                          //             );
+
+                          //         context.read<ProjectsCubit>().loadProjects(
+                          //               context.read<AuthBloc>().state.user,
+                          //             );
+                          //       },
+                          //       style: ElevatedButton.styleFrom(
+                          //         fixedSize: const Size(20, 20),
+                          //         backgroundColor: AppColors.callToAction,
+                          //       ),
+                          //       child: const Icon(
+                          //         Icons.delete,
+                          //         size: 20,
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+                        ),
+                      );
+                    }),
                   ),
-                )),
+                );
+              }
+            }),
           ],
         ),
       ),
