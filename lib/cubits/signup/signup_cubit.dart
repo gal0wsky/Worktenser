@@ -1,11 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:worktenser/domain/authentication/repositories/auth_repository.dart';
+import 'package:worktenser/domain/authentication/repositories/iauth_repository.dart';
 
 part 'signup_state.dart';
 
 class SignupCubit extends Cubit<SignupState> {
-  final AuthRepository _authRepository;
+  final IAuthRepository _authRepository;
 
   SignupCubit(this._authRepository) : super(SignupState.initial());
 

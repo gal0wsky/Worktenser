@@ -1,13 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:worktenser/domain/authentication/repositories/auth_repository.dart';
+import 'package:worktenser/domain/authentication/repositories/iauth_repository.dart';
 
 part 'login_state.dart';
 
 class LoginCubit extends Cubit<LoginState> {
-  final AuthRepository _authRepository;
+  final IAuthRepository _authRepository;
 
-  LoginCubit({required AuthRepository authRepository})
+  LoginCubit({required IAuthRepository authRepository})
       : _authRepository = authRepository,
         super(LoginState.initial());
 
