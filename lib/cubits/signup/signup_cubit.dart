@@ -10,27 +10,45 @@ class SignupCubit extends Cubit<SignupState> {
   SignupCubit(this._authRepository) : super(SignupState.initial());
 
   void nameChanged(String value) {
-    emit(state.copyWith(name: value, status: SignupStatus.initial));
+    if (value.isEmpty) {
+      emit(state.copyWith(status: SignupStatus.error));
+    } else {
+      emit(state.copyWith(name: value, status: SignupStatus.initial));
+    }
   }
 
   void emailChanged(String value) {
-    emit(state.copyWith(email: value, status: SignupStatus.initial));
+    if (value.isEmpty) {
+      emit(state.copyWith(status: SignupStatus.error));
+    } else {
+      emit(state.copyWith(email: value, status: SignupStatus.initial));
+    }
   }
 
   void passwordChanged(String value) {
-    emit(state.copyWith(password: value, status: SignupStatus.initial));
+    if (value.isEmpty) {
+      emit(state.copyWith(status: SignupStatus.error));
+    } else {
+      emit(state.copyWith(password: value, status: SignupStatus.initial));
+    }
   }
 
-  Future signInWithEmailAndPassword() async {
+  Future signUpWithEmailAndPassword() async {
     if (state.status == SignupStatus.submitting) return;
 
     emit(state.copyWith(status: SignupStatus.submitting));
 
     try {
-      await _authRepository.signupWithEmailAndPassword(
+      final result = await _authRepository.signupWithEmailAndPassword(
           email: state.email, password: state.password);
 
-      emit(state.copyWith(status: SignupStatus.success));
-    } catch (_) {}
+      if (!result) {
+        emit(state.copyWith(status: SignupStatus.error));
+      } else {
+        emit(state.copyWith(status: SignupStatus.success));
+      }
+    } catch (e) {
+      emit(state.copyWith(status: SignupStatus.error));
+    }
   }
 }

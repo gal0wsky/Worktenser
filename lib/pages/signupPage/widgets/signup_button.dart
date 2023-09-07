@@ -18,7 +18,7 @@ class SignupButton extends StatelessWidget {
                     fixedSize: const Size(200, 40),
                     backgroundColor: AppColors.callToAction),
                 onPressed: () {
-                  context.read<SignupCubit>().signInWithEmailAndPassword();
+                  context.read<SignupCubit>().signUpWithEmailAndPassword();
                 },
                 child: const Text('SIGN UP'),
               );
