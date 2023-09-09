@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:worktenser/domain/authentication/models/user_model.dart';
 import 'package:worktenser/domain/projects/models/project_model.dart';
+import 'package:worktenser/domain/projects/repositories/iprojects_repository.dart';
 
-class ProjectsRepository {
+class ProjectsRepository implements IProjectsRepository {
   final FirebaseFirestore _db;
 
   ProjectsRepository({FirebaseFirestore? firestore})
       : _db = firestore ?? FirebaseFirestore.instance;
 
+  @override
   Future<List<Project>> loadProjects(User user) async {
     List<Project> projects = [];
 
@@ -31,6 +33,7 @@ class ProjectsRepository {
     return projects;
   }
 
+  @override
   Future<bool> addProject(Project project) async {
     bool status = true;
 
@@ -45,6 +48,7 @@ class ProjectsRepository {
     return status;
   }
 
+  @override
   Future<bool> updateProject(Project project) async {
     bool status = true;
 
@@ -57,6 +61,7 @@ class ProjectsRepository {
     return status;
   }
 
+  @override
   Future<bool> deleteProject(Project project) async {
     bool status = true;
 

@@ -2,18 +2,18 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:worktenser/domain/authentication/models/user_model.dart';
 import 'package:worktenser/domain/projects/models/project_model.dart';
-import 'package:worktenser/domain/projects/repositories/projects_repository.dart';
+import 'package:worktenser/domain/projects/repositories/iprojects_repository.dart';
 
 part 'projects_state.dart';
 
 class ProjectsCubit extends Cubit<ProjectsState> {
-  final ProjectsRepository _projectsRepository;
+  final IProjectsRepository _projectsRepository;
 
-  ProjectsCubit({required ProjectsRepository projectsRepository})
+  ProjectsCubit({required IProjectsRepository projectsRepository})
       : _projectsRepository = projectsRepository,
         super(ProjectsState.initial());
 
-  Future loadProjects(User user) async {
+  Future<void> loadProjects(User user) async {
     if (state.status == ProjectsStatus.loading) return;
 
     emit(state.copyWith(status: ProjectsStatus.loading));
@@ -31,7 +31,7 @@ class ProjectsCubit extends Cubit<ProjectsState> {
     }
   }
 
-  Future addProject(Project project) async {
+  Future<void> addProject(Project project) async {
     if (state.status == ProjectsStatus.loading) return;
 
     emit(state.copyWith(status: ProjectsStatus.loading));
@@ -58,7 +58,7 @@ class ProjectsCubit extends Cubit<ProjectsState> {
     }
   }
 
-  Future updateProject(Project project) async {
+  Future<void> updateProject(Project project) async {
     if (state.status == ProjectsStatus.loading) return;
 
     emit(state.copyWith(status: ProjectsStatus.loading));
@@ -84,7 +84,7 @@ class ProjectsCubit extends Cubit<ProjectsState> {
     }
   }
 
-  Future deleteProject(Project project) async {
+  Future<void> deleteProject(Project project) async {
     if (state.status == ProjectsStatus.loading) return;
 
     emit(state.copyWith(status: ProjectsStatus.loading));
