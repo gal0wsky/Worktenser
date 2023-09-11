@@ -27,7 +27,9 @@ class ProjectsRepository implements IProjectsRepository {
 
         return list;
       },
-      onError: (e) => projects = [],
+      onError: (e) {
+        projects = [];
+      },
     );
 
     return projects;
@@ -37,13 +39,17 @@ class ProjectsRepository implements IProjectsRepository {
   Future<bool> addProject(Project project) async {
     bool status = true;
 
-    final projectDoc = _db.collection('projects').doc();
+    try {
+      final projectDoc = _db.collection('projects').doc();
 
-    project = project.copyWith(id: projectDoc.id);
+      project = project.copyWith(id: projectDoc.id);
 
-    await projectDoc
-        .set(project.toJson())
-        .onError((error, stackTrace) => status = false);
+      await projectDoc.set(project.toJson()).onError((error, stackTrace) {
+        status = false;
+      });
+    } catch (e) {
+      status = false;
+    }
 
     return status;
   }

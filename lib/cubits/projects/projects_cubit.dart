@@ -1,108 +1,95 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:worktenser/domain/authentication/models/user_model.dart';
-import 'package:worktenser/domain/projects/models/project_model.dart';
-import 'package:worktenser/domain/projects/repositories/iprojects_repository.dart';
+import 'package:worktenser/domain/authentication/authentication.dart';
+import 'package:worktenser/domain/projects/models/models.dart';
+import 'package:worktenser/domain/projects/repositories/projects_repository.dart';
 
 part 'projects_state.dart';
 
 class ProjectsCubit extends Cubit<ProjectsState> {
-  final IProjectsRepository _projectsRepository;
+  final ProjectsRepository _projectsRepository;
 
-  ProjectsCubit({required IProjectsRepository projectsRepository})
+  ProjectsCubit({required ProjectsRepository projectsRepository})
       : _projectsRepository = projectsRepository,
-        super(ProjectsState.initial());
+        super(ProjectsInitial());
 
   Future<void> loadProjects(User user) async {
-    if (state.status == ProjectsStatus.loading) return;
+    if (state is ProjectsLoading) return;
 
-    emit(state.copyWith(status: ProjectsStatus.loading));
+    emit(ProjectsLoading());
 
     try {
       final projects = await _projectsRepository.loadProjects(user);
 
-      emit(state.update(
-        newStatus: ProjectsStatus.success,
-        newProjects: projects,
+      emit(ProjectsLoaded(
+        projects: projects,
+        projectsCount: projects.length,
+        projectsTime: _countProjectsTotalTime(projects),
       ));
     } catch (e) {
-      emit(state.copyWith(status: ProjectsStatus.error));
-      print(e);
+      emit(const ProjectsLoadingError());
     }
   }
 
   Future<void> addProject(Project project) async {
-    if (state.status == ProjectsStatus.loading) return;
+    if (state is ProjectsLoading) return;
 
-    emit(state.copyWith(status: ProjectsStatus.loading));
+    emit(ProjectsLoading());
 
     try {
       final result = await _projectsRepository.addProject(project);
 
-      final newStatus = result ? ProjectsStatus.reload : ProjectsStatus.error;
-
-      List<Project> projects = [];
-
-      for (var proj in state.projects) {
-        projects.add(proj);
-      }
-      projects.add(project);
-
-      emit(state.update(
-        newStatus: newStatus,
-        newProjects: projects,
-      ));
+      emit(result ? ProjectsReload() : const ProjectsLoadingError());
     } catch (e) {
-      emit(state.copyWith(status: ProjectsStatus.error));
-      print(e);
+      emit(const ProjectsLoadingError());
     }
   }
 
   Future<void> updateProject(Project project) async {
-    if (state.status == ProjectsStatus.loading) return;
+    if (state is ProjectsLoading) return;
 
-    emit(state.copyWith(status: ProjectsStatus.loading));
+    emit(ProjectsLoading());
 
     try {
       final result = await _projectsRepository.updateProject(project);
 
-      if (!result) {
-        emit(state.copyWith(status: ProjectsStatus.error));
-      } else {
-        final updatedProjects = state.projects.map((proj) {
-          return proj.id == project.id ? project : proj;
-        }).toList();
-
-        emit(state.update(
-          newStatus: ProjectsStatus.success,
-          newProjects: updatedProjects,
-        ));
-      }
+      emit(
+        result
+            ? ProjectsReload()
+            : const ProjectsLoadingError(
+                message: "Couldn't update the project"),
+      );
     } catch (e) {
-      emit(state.copyWith(status: ProjectsStatus.error));
-      print(e);
+      emit(const ProjectsLoadingError());
     }
   }
 
   Future<void> deleteProject(Project project) async {
-    if (state.status == ProjectsStatus.loading) return;
+    if (state is ProjectsLoading) return;
 
-    emit(state.copyWith(status: ProjectsStatus.loading));
+    emit(ProjectsLoading());
 
     try {
       final result = await _projectsRepository.deleteProject(project);
 
-      if (!result) {
-        emit(state.copyWith(status: ProjectsStatus.error));
-      } else {
-        emit(state.copyWith(
-          status: ProjectsStatus.reload,
-          projectsCount: state.projectsCount - 1,
-        ));
-      }
+      emit(
+        result
+            ? ProjectsReload()
+            : const ProjectsLoadingError(
+                message: "Couldn't delete the project"),
+      );
     } catch (e) {
-      emit(state.copyWith(status: ProjectsStatus.error));
-      print(e);
+      emit(const ProjectsLoadingError());
     }
   }
+}
+
+int _countProjectsTotalTime(List<Project> projects) {
+  int time = 0;
+
+  for (var project in projects) {
+    time += project.time;
+  }
+
+  return time;
 }

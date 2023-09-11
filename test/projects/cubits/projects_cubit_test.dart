@@ -34,10 +34,12 @@ void main() {
 
   setUp(() => cubit = ProjectsCubit(projectsRepository: repoMock));
 
+  tearDown(() => cubit.close());
+
   test('Create cubit', () {
     final projectsCubit = ProjectsCubit(projectsRepository: repoMock);
 
-    expect(projectsCubit.state, ProjectsState.initial());
+    expect(projectsCubit.state, ProjectsInitial());
   });
 
   test('Load projects valid', () async {
@@ -46,9 +48,12 @@ void main() {
 
     await cubit.loadProjects(fakeUser);
 
-    expect(cubit.state.status, ProjectsStatus.success);
-    expect(cubit.state.projects, isNotEmpty);
-    expect(cubit.state.projects.length, 2);
+    expect(
+        cubit.state,
+        ProjectsLoaded(
+            projects: [fakeProj1, fakeProj2],
+            projectsCount: 2,
+            projectsTime: 37));
   });
 
   test('Load projects catch error', () async {
@@ -56,6 +61,93 @@ void main() {
 
     await cubit.loadProjects(fakeUser);
 
-    expect(cubit.state.status, ProjectsStatus.error);
+    expect(cubit.state, const ProjectsLoadingError());
+  });
+
+  test('Load projects active loading', () async {
+    cubit.emit(ProjectsLoading());
+
+    await cubit.loadProjects(fakeUser);
+
+    expect(cubit.state, ProjectsLoading());
+  });
+
+  test('Add project valid', () async {
+    when(repoMock.addProject(fakeProj1))
+        .thenAnswer((realInvocation) async => true);
+
+    await cubit.addProject(fakeProj1);
+
+    expect(cubit.state, ProjectsReload());
+  });
+
+  test('Add project catch error', () async {
+    when(repoMock.addProject(fakeProj1)).thenThrow(Exception());
+
+    await cubit.addProject(fakeProj1);
+
+    expect(cubit.state, const ProjectsLoadingError());
+  });
+
+  test('Add project active loading', () async {
+    cubit.emit(ProjectsLoading());
+
+    await cubit.addProject(fakeProj1);
+
+    expect(cubit.state, ProjectsLoading());
+  });
+
+  test('Update project valid', () async {
+    when(repoMock.updateProject(fakeProj1))
+        .thenAnswer((realInvocation) async => true);
+
+    await cubit.updateProject(fakeProj1);
+
+    expect(cubit.state, ProjectsReload());
+  });
+
+  test('Update project invalid', () async {
+    when(repoMock.updateProject(fakeProj1))
+        .thenAnswer((realInvocation) async => false);
+
+    await cubit.updateProject(fakeProj1);
+
+    expect(cubit.state,
+        const ProjectsLoadingError(message: "Couldn't update the project"));
+  });
+
+  test('Update project active loading', () async {
+    cubit.emit(ProjectsLoading());
+
+    await cubit.updateProject(fakeProj1);
+
+    expect(cubit.state, ProjectsLoading());
+  });
+
+  test('Delete project', () async {
+    when(repoMock.deleteProject(fakeProj1))
+        .thenAnswer((realInvocation) async => true);
+
+    await cubit.deleteProject(fakeProj1);
+
+    expect(cubit.state, ProjectsReload());
+  });
+
+  test('Delete project invalid', () async {
+    when(repoMock.deleteProject(fakeProj1))
+        .thenAnswer((realInvocation) async => false);
+
+    await cubit.deleteProject(fakeProj1);
+
+    expect(cubit.state,
+        const ProjectsLoadingError(message: "Couldn't delete the project"));
+  });
+
+  test('Delete project active loading', () async {
+    cubit.emit(ProjectsLoading());
+
+    await cubit.deleteProject(fakeProj1);
+
+    expect(cubit.state, ProjectsLoading());
   });
 }

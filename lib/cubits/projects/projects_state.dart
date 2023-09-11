@@ -1,63 +1,38 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'projects_cubit.dart';
 
-enum ProjectsStatus { initial, loading, success, error, reload }
+sealed class ProjectsState extends Equatable {
+  const ProjectsState();
 
-class ProjectsState extends Equatable {
+  @override
+  List<Object> get props => [];
+}
+
+final class ProjectsInitial extends ProjectsState {}
+
+class ProjectsLoading extends ProjectsState {}
+
+class ProjectsLoaded extends ProjectsState {
   final List<Project> projects;
   final int projectsCount;
   final int projectsTime;
-  final ProjectsStatus status;
 
-  const ProjectsState({
-    required this.projects,
-    required this.projectsCount,
-    required this.projectsTime,
-    required this.status,
-  });
-
-  factory ProjectsState.initial() {
-    return const ProjectsState(
-      projects: [],
-      projectsCount: 0,
-      projectsTime: 0,
-      status: ProjectsStatus.initial,
-    );
-  }
+  const ProjectsLoaded(
+      {this.projects = const <Project>[],
+      this.projectsCount = 0,
+      this.projectsTime = 0});
 
   @override
-  List<Object> get props => [projects, projectsCount, projectsCount];
-
-  ProjectsState copyWith({
-    List<Project>? projects,
-    int? projectsCount,
-    int? projectsTime,
-    ProjectsStatus status = ProjectsStatus.initial,
-  }) {
-    return ProjectsState(
-      projects: projects ?? this.projects,
-      projectsCount: projectsCount ?? this.projectsCount,
-      projectsTime: projectsTime ?? this.projectsTime,
-      status: status,
-    );
-  }
-
-  ProjectsState update(
-      {required ProjectsStatus newStatus, required List<Project> newProjects}) {
-    return ProjectsState(
-        projects: newProjects,
-        projectsCount: newProjects.length,
-        projectsTime: _countProjectsTotalTime(newProjects),
-        status: newStatus);
-  }
-
-  int _countProjectsTotalTime(List<Project> projects) {
-    int time = 0;
-
-    for (var project in projects) {
-      time += project.time;
-    }
-
-    return time;
-  }
+  List<Object> get props => [projects, projectsCount, projectsTime];
 }
+
+class ProjectsLoadingError extends ProjectsState {
+  final String message;
+
+  const ProjectsLoadingError({this.message = 'Something went wrong.'});
+
+  @override
+  List<Object> get props => [message];
+}
+
+class ProjectsReload extends ProjectsState {}

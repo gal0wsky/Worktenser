@@ -95,26 +95,25 @@ class HomePage extends StatelessWidget {
             ),
             BlocConsumer<ProjectsCubit, ProjectsState>(
                 listener: (context, state) {
-              if (state.status == ProjectsStatus.reload) {
+              if (state is ProjectsReload) {
                 context
                     .read<ProjectsCubit>()
                     .loadProjects(context.read<AuthBloc>().state.user);
               }
             }, builder: (context, state) {
-              if (state.status == ProjectsStatus.initial) {
+              if (state is ProjectsInitial) {
                 context.read<ProjectsCubit>().loadProjects(
                       context.read<AuthBloc>().state.user,
                     );
                 return const CircularProgressIndicator();
-              } else if (state.status == ProjectsStatus.error) {
-                return const Text('Something went wrong');
-              } else if (state.status == ProjectsStatus.reload) {
+              } else if (state is ProjectsLoadingError) {
+                return Text(state.message);
+              } else if (state is ProjectsReload) {
                 return const CircularProgressIndicator();
-              } else {
+              } else if (state is ProjectsLoaded) {
                 return Expanded(
                   child: ListView.builder(
-                    itemCount:
-                        context.read<ProjectsCubit>().state.projectsCount,
+                    itemCount: state.projectsCount,
                     shrinkWrap: true,
                     itemBuilder: ((context, index) {
                       return Center(
@@ -124,11 +123,7 @@ class HomePage extends StatelessWidget {
                           ),
                           child: ListTile(
                             title: Text(
-                              context
-                                  .read<ProjectsCubit>()
-                                  .state
-                                  .projects[index]
-                                  .name,
+                              state.projects[index].name,
                               style: const TextStyle(
                                 fontSize: 20,
                                 color: AppColors.textPrimary,
@@ -138,10 +133,8 @@ class HomePage extends StatelessWidget {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (_) => DetailsPage(
-                                      project: context
-                                          .read<ProjectsCubit>()
-                                          .state
-                                          .projects[index]),
+                                    project: state.projects[index],
+                                  ),
                                 ),
                               );
                             },
@@ -151,6 +144,8 @@ class HomePage extends StatelessWidget {
                     }),
                   ),
                 );
+              } else {
+                return const Text('Something went wrong');
               }
             }),
           ],

@@ -16,10 +16,10 @@ class DetailsPage extends StatelessWidget {
       backgroundColor: AppColors.primary,
       body: BlocBuilder<ProjectsCubit, ProjectsState>(
         builder: (context, state) {
-          if (state.status == ProjectsStatus.loading) {
+          if (state is ProjectsLoading) {
             return const CircularProgressIndicator();
-          } else if (state.status == ProjectsStatus.error) {
-            return const Text('Something went wrong!');
+          } else if (state is ProjectsLoadingError) {
+            return Text(state.message);
           }
 
           return Column(
