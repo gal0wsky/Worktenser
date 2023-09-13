@@ -2,18 +2,26 @@ import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:worktenser/bloc_observer.dart';
 import 'package:worktenser/blocs/auth/auth_bloc.dart';
 import 'package:worktenser/config/routes.dart';
 import 'package:worktenser/cubits/projects/projects_cubit.dart';
 import 'package:worktenser/domain/authentication/repositories/auth_repository.dart';
 import 'package:worktenser/domain/projects/repositories/projects_repository.dart';
+import 'package:worktenser/domain/timeCounter/timeCounter.dart';
 
 Future main() async {
   Bloc.observer = AppBlocObserver();
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  await Permission.notification.isDenied.then((value) {
+    if (value) {
+      Permission.notification.request();
+    }
+  });
 
   final authRepository = AuthRepository();
   final projectsRepository = ProjectsRepository();
@@ -59,12 +67,16 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Worktenser',
-      home: FlowBuilder<AuthStatus>(
-        state: context.select((AuthBloc bloc) => bloc.state.status),
-        onGeneratePages: onGenerateAppViewPages,
-      ),
-    );
+    return FutureBuilder(
+        future: initializeTimeCounterService(context.read<ProjectsCubit>()),
+        builder: ((context, snapshot) {
+          return MaterialApp(
+            title: 'Worktenser',
+            home: FlowBuilder<AuthStatus>(
+              state: context.select((AuthBloc bloc) => bloc.state.status),
+              onGeneratePages: onGenerateAppViewPages,
+            ),
+          );
+        }));
   }
 }

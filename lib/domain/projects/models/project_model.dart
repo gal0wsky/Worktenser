@@ -16,6 +16,37 @@ class Project extends Equatable {
     required this.userId,
   });
 
+  String printTime() {
+    int time = this.time;
+
+    final hours = time ~/ 3600;
+    time = (time % 3600).toInt();
+    final minutes = time ~/ 60;
+    final seconds = time % 60;
+
+    // if (hours > 0) {
+    //   return '$hours h $minutes min $seconds s';
+    // } else if (minutes > 0) {
+    //   return '$minutes min $seconds s';
+    // }
+
+    // return '$seconds s';
+
+    final formattedTime =
+        _formatTime(hours: hours, minutes: minutes, seconds: seconds);
+
+    return formattedTime;
+  }
+
+  String _formatTime(
+      {required int hours, required int minutes, required int seconds}) {
+    final hoursStr = hours.toString().padLeft(2, '0');
+    final minutesStr = minutes.toString().padLeft(2, '0');
+    final secondsStr = seconds.toString().padLeft(2, '0');
+
+    return '$hoursStr:$minutesStr:$secondsStr';
+  }
+
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
         'name': name,

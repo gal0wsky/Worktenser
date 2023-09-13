@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/config/colors.dart';
 import 'package:worktenser/cubits/projects/projects_cubit.dart';
 import 'package:worktenser/domain/projects/models/project_model.dart';
+import 'package:worktenser/domain/timeCounter/timeCounter.dart';
 import 'package:worktenser/pages/editProjectPage/edit_project_page.dart';
 
 class DetailsPage extends StatelessWidget {
@@ -104,6 +106,44 @@ class DetailsPage extends StatelessWidget {
                 project.description ?? '',
                 style: const TextStyle(
                   color: AppColors.textPrimary,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  FlutterBackgroundService()
+                      .invoke('setAsForeground', <String, dynamic>{
+                    'project': project,
+                  });
+                },
+                child: const Text(
+                  'Foreground',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  // currentCounterProject = project;
+                  updateCurrentTimerProject(project);
+                  await FlutterBackgroundService().startService();
+                },
+                child: const Text(
+                  'Start',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  FlutterBackgroundService().invoke('stopTimeCounter');
+                },
+                child: const Text(
+                  'Stop',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],
