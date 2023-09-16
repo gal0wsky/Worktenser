@@ -1,10 +1,17 @@
 import 'dart:async';
 import 'dart:ui';
 
+// import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
+import 'package:flutter_background_service_ios/flutter_background_service_ios.dart';
 import 'package:worktenser/cubits/projects/projects_cubit.dart';
 import 'package:worktenser/domain/projects/projects.dart';
+
+const _notificationsChannelName = 'dev.gawlowski.worktenser/notifications';
+const _notificationsChannel = MethodChannel(_notificationsChannelName);
 
 late ProjectsCubit _cubit;
 Project currentCounterProject = const Project(
@@ -54,7 +61,7 @@ void _onStart(ServiceInstance service) async {
     service.stopSelf();
   });
 
-  Timer.periodic(const Duration(seconds: 1), (timer) {
+  Timer.periodic(const Duration(seconds: 1), (timer) async {
     int newTime = currentCounterProject.time;
     newTime++;
     currentCounterProject = currentCounterProject.copyWith(time: newTime);
@@ -63,6 +70,24 @@ void _onStart(ServiceInstance service) async {
       service.setForegroundNotificationInfo(
           title: 'Working on ${currentCounterProject.name}',
           content: 'Current time: ${currentCounterProject.printTime()}');
+
+      // await AwesomeNotifications().dismissAllNotifications();
+
+      // await AwesomeNotifications().createNotification(
+      //   content: NotificationContent(
+      //     id: -1,
+      //     channelKey: 'worktenser_channel',
+      //     title: 'Working on ${currentCounterProject.name}',
+      //     body: 'Current time: ${currentCounterProject.printTime()}',
+      //   ),
+      // );
+    }
+
+    if (service is IOSServiceInstance) {
+      await _sendIosForegroundNotification(
+        title: 'Working on ${currentCounterProject.name}',
+        body: 'Current time: ${currentCounterProject.printTime()}',
+      );
     }
 
     print(
@@ -73,4 +98,14 @@ void _onStart(ServiceInstance service) async {
 Future<void> _onStop() async {
   // await _cubit.updateProject(currentCounterProject);
   print(currentCounterProject.toJson());
+}
+
+Future<void> _sendIosForegroundNotification(
+    {required String title, required String body}) async {
+  final args = <String, String>{
+    'title': title,
+    'body': body,
+  };
+
+  final result = await _notificationsChannel.invokeMethod('localNotification');
 }

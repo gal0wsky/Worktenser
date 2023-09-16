@@ -1,3 +1,5 @@
+// import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -17,14 +19,36 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  await Permission.notification.isDenied.then((value) {
-    if (value) {
-      Permission.notification.request();
-    }
-  });
-
   final authRepository = AuthRepository();
   final projectsRepository = ProjectsRepository();
+
+  // await Permission.notification.isDenied.then(
+  //   (value) {
+  //     if (!value) {
+  //       Permission.notification.request();
+  //     }
+  //   },
+  // );
+
+  await AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+        channelKey: 'worktenser_channel',
+        channelName: 'Worktenser notifications',
+        channelDescription: 'Notifications channel for Worktenser mobile app.',
+      ),
+    ],
+    debug: true,
+  );
+
+  await AwesomeNotifications().isNotificationAllowed().then(
+    (isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    },
+  );
 
   runApp(App(
     authRepository: authRepository,
