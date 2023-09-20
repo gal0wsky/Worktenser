@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:worktenser/domain/authentication/authentication.dart';
-import 'package:worktenser/domain/projects/models/models.dart';
-import 'package:worktenser/domain/projects/repositories/iprojects_repository.dart';
+import 'package:worktenser/domain/projects/src/models/models.dart';
+import 'package:worktenser/domain/projects/src/repositories/iprojects_repository.dart';
 
 part 'projects_state.dart';
 

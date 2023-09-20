@@ -7,8 +7,9 @@ import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:worktenser/domain/authentication/models/user_model.dart' as _i5;
-import 'package:worktenser/domain/projects/models/project_model.dart' as _i4;
-import 'package:worktenser/domain/projects/repositories/projects_repository.dart'
+import 'package:worktenser/domain/projects/src/models/project_model.dart'
+    as _i4;
+import 'package:worktenser/domain/projects/src/repositories/projects_repository.dart'
     as _i2;
 
 // ignore_for_file: type=lint

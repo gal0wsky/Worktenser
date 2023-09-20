@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:worktenser/domain/authentication/models/user_model.dart';
-import 'package:worktenser/domain/projects/models/project_model.dart';
-import 'package:worktenser/domain/projects/repositories/iprojects_repository.dart';
+import 'package:worktenser/domain/projects/src/models/project_model.dart';
+import 'package:worktenser/domain/projects/src/repositories/iprojects_repository.dart';
 
 class ProjectsRepository implements IProjectsRepository {
   final FirebaseFirestore _db;

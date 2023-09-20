@@ -84,7 +84,7 @@ void _onStart(ServiceInstance service) async {
     }
 
     if (service is IOSServiceInstance) {
-      await _sendIosForegroundNotification(
+      await sendIosForegroundNotification(
         title: 'Working on ${currentCounterProject.name}',
         body: 'Current time: ${currentCounterProject.printTime()}',
       );
@@ -100,12 +100,13 @@ Future<void> _onStop() async {
   print(currentCounterProject.toJson());
 }
 
-Future<void> _sendIosForegroundNotification(
+Future<void> sendIosForegroundNotification(
     {required String title, required String body}) async {
   final args = <String, String>{
     'title': title,
     'body': body,
   };
 
-  final result = await _notificationsChannel.invokeMethod('localNotification');
+  final result =
+      await _notificationsChannel.invokeMethod('localNotification', args);
 }

@@ -10,7 +10,7 @@ import 'package:worktenser/blocs/auth/auth_bloc.dart';
 import 'package:worktenser/config/routes.dart';
 import 'package:worktenser/cubits/projects/projects_cubit.dart';
 import 'package:worktenser/domain/authentication/repositories/auth_repository.dart';
-import 'package:worktenser/domain/projects/repositories/projects_repository.dart';
+import 'package:worktenser/domain/projects/src/repositories/projects_repository.dart';
 import 'package:worktenser/domain/timeCounter/timeCounter.dart';
 
 Future main() async {

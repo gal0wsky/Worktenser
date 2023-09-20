@@ -3,7 +3,7 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/config/colors.dart';
 import 'package:worktenser/cubits/projects/projects_cubit.dart';
-import 'package:worktenser/domain/projects/models/project_model.dart';
+import 'package:worktenser/domain/projects/src/models/project_model.dart';
 import 'package:worktenser/domain/timeCounter/timeCounter.dart';
 import 'package:worktenser/pages/editProjectPage/edit_project_page.dart';
 
