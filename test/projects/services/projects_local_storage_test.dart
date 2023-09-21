@@ -7,15 +7,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worktenser/blocs/blocs.dart';
 import 'package:worktenser/domain/authentication/models/user_model.dart';
 import 'package:worktenser/domain/projects/projects.dart';
-import 'package:worktenser/domain/projects/src/services/projects_local_storage.dart';
 
 import 'projects_local_storage_test.mocks.dart';
 
 @GenerateNiceMocks([MockSpec<SharedPreferences>(), MockSpec<AuthBloc>()])
 void main() {
   final prefsMock = MockSharedPreferences();
-  final authBloc = MockAuthBloc();
   late ProjectsLocalStorage storage;
+
+  const storageKey = 'worktenser.projects';
 
   const fakeUser = User(id: 'fakeId');
 
@@ -35,8 +35,7 @@ void main() {
     description: 'My test project',
   );
 
-  setUp(() =>
-      storage = ProjectsLocalStorage(prefs: prefsMock, authBloc: authBloc));
+  setUp(() => storage = ProjectsLocalStorage(prefs: prefsMock));
 
   test('Load projects successful', () {
     final fakeProjects = [fakeProj1.toJson(), fakeProj2.toJson()];
@@ -64,10 +63,7 @@ void main() {
   test('Save projects successful', () async {
     final fakeProjects = [fakeProj1, fakeProj2];
 
-    when(authBloc.state).thenAnswer(
-        (realInvocation) => const AuthState.authenticated(fakeUser));
-
-    when(prefsMock.setString(fakeUser.id, json.encode(fakeProjects)))
+    when(prefsMock.setString(storageKey, json.encode(fakeProjects)))
         .thenAnswer((realInvocation) async => true);
 
     final result = await storage.save(fakeProjects);
@@ -78,10 +74,7 @@ void main() {
   test('Save projects invalid', () async {
     final fakeProjects = [fakeProj1, fakeProj2];
 
-    when(authBloc.state).thenAnswer(
-        (realInvocation) => const AuthState.authenticated(fakeUser));
-
-    when(prefsMock.setString(fakeUser.id, json.encode(fakeProjects)))
+    when(prefsMock.setString(storageKey, json.encode(fakeProjects)))
         .thenAnswer((realInvocation) async => false);
 
     final result = await storage.save(fakeProjects);
@@ -95,13 +88,10 @@ void main() {
     final storedProjects = [fakeProj1, fakeProj2];
     final fakeProjects = [fakeProj1, fakeProj3];
 
-    when(authBloc.state).thenAnswer(
-        (realInvocation) => const AuthState.authenticated(fakeUser));
-
     when(prefsMock.getString('worktenser.projects'))
         .thenAnswer((realInvocation) => json.encode(storedProjects));
 
-    when(prefsMock.setString(fakeUser.id, json.encode(fakeProjects)))
+    when(prefsMock.setString(storageKey, json.encode(fakeProjects)))
         .thenAnswer((realInvocation) async => true);
 
     final result = await storage.update(fakeProj3);
@@ -115,13 +105,10 @@ void main() {
     final storedProjects = [fakeProj1, fakeProj2];
     final fakeProjects = [fakeProj1, fakeProj3];
 
-    when(authBloc.state).thenAnswer(
-        (realInvocation) => const AuthState.authenticated(fakeUser));
-
     when(prefsMock.getString('worktenser.projects'))
         .thenAnswer((realInvocation) => json.encode(storedProjects));
 
-    when(prefsMock.setString(fakeUser.id, json.encode(fakeProjects)))
+    when(prefsMock.setString(storageKey, json.encode(fakeProjects)))
         .thenAnswer((realInvocation) async => false);
 
     final result = await storage.update(fakeProj3);
@@ -134,13 +121,10 @@ void main() {
 
     final fakeProjects = [fakeProj1, fakeProj3];
 
-    when(authBloc.state).thenAnswer(
-        (realInvocation) => const AuthState.authenticated(fakeUser));
-
     when(prefsMock.getString('worktenser.projects'))
         .thenAnswer((realInvocation) => json.encode([]));
 
-    when(prefsMock.setString(fakeUser.id, json.encode(fakeProjects)))
+    when(prefsMock.setString(storageKey, json.encode(fakeProjects)))
         .thenAnswer((realInvocation) async => false);
 
     final result = await storage.update(fakeProj3);
@@ -149,13 +133,10 @@ void main() {
   });
 
   test('Delete project successful', () async {
-    when(authBloc.state).thenAnswer(
-        (realInvocation) => const AuthState.authenticated(fakeUser));
-
     when(prefsMock.getString('worktenser.projects'))
         .thenAnswer((realInvocation) => json.encode([fakeProj1, fakeProj2]));
 
-    when(prefsMock.setString(fakeUser.id, json.encode([fakeProj2])))
+    when(prefsMock.setString(storageKey, json.encode([fakeProj2])))
         .thenAnswer((realInvocation) async => true);
 
     final result = await storage.delete(fakeProj1);
@@ -164,13 +145,10 @@ void main() {
   });
 
   test('Delete project successful', () async {
-    when(authBloc.state).thenAnswer(
-        (realInvocation) => const AuthState.authenticated(fakeUser));
-
     when(prefsMock.getString('worktenser.projects'))
         .thenAnswer((realInvocation) => json.encode([fakeProj1, fakeProj2]));
 
-    when(prefsMock.setString(fakeUser.id, json.encode([fakeProj2])))
+    when(prefsMock.setString(storageKey, json.encode([fakeProj2])))
         .thenAnswer((realInvocation) async => false);
 
     final result = await storage.delete(fakeProj1);

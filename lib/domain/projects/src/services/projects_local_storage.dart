@@ -1,20 +1,16 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:worktenser/blocs/auth/auth_bloc.dart';
 import 'package:worktenser/domain/projects/src/models/project_model.dart';
 import 'package:worktenser/domain/projects/src/services/iprojects_local_storage.dart';
 
 class ProjectsLocalStorage implements IProjectsLocalStorage {
-  final AuthBloc _authBloc;
   final SharedPreferences _prefs;
 
   static const String _key = 'worktenser.projects';
 
-  const ProjectsLocalStorage(
-      {required SharedPreferences prefs, required AuthBloc authBloc})
-      : _prefs = prefs,
-        _authBloc = authBloc;
+  const ProjectsLocalStorage({required SharedPreferences prefs})
+      : _prefs = prefs;
 
   @override
   List<Project> load() {
@@ -31,8 +27,7 @@ class ProjectsLocalStorage implements IProjectsLocalStorage {
 
   @override
   Future<bool> save(List<Project> projects) async {
-    final userId = _authBloc.state.user.id;
-    final result = await _prefs.setString(userId, json.encode(projects));
+    final result = await _prefs.setString(_key, json.encode(projects));
 
     return result;
   }
