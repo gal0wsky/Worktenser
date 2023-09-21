@@ -10,27 +10,15 @@ class SignupCubit extends Cubit<SignupState> {
   SignupCubit(this._authRepository) : super(SignupState.initial());
 
   void nameChanged(String value) {
-    if (value.isEmpty) {
-      emit(state.copyWith(status: SignupStatus.error));
-    } else {
-      emit(state.copyWith(name: value, status: SignupStatus.initial));
-    }
+    emit(state.copyWith(name: value, status: SignupStatus.initial));
   }
 
   void emailChanged(String value) {
-    if (value.isEmpty) {
-      emit(state.copyWith(status: SignupStatus.error));
-    } else {
-      emit(state.copyWith(email: value, status: SignupStatus.initial));
-    }
+    emit(state.copyWith(email: value, status: SignupStatus.initial));
   }
 
   void passwordChanged(String value) {
-    if (value.isEmpty) {
-      emit(state.copyWith(status: SignupStatus.error));
-    } else {
-      emit(state.copyWith(password: value, status: SignupStatus.initial));
-    }
+    emit(state.copyWith(password: value, status: SignupStatus.initial));
   }
 
   Future signUpWithEmailAndPassword() async {

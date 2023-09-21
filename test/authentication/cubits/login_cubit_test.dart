@@ -9,7 +9,6 @@ void main() {
   late LoginCubit cubit;
   const validEmail = 'valid@email.com';
   const invalidEmail = 'invalid@email.com';
-  const emptyEmail = '';
 
   const validPassword = 'password123';
   const invalidPassword = 'invalidPassword';
@@ -30,23 +29,11 @@ void main() {
     expect(cubit.state.status, LoginStatus.initial);
   });
 
-  test('EmailChanged to empty', () {
-    cubit.emailChanged(emptyEmail);
-
-    expect(cubit.state.status, LoginStatus.error);
-  });
-
   test('PasswordChanged', () {
     cubit.passwordChanged(validPassword);
 
     expect(cubit.state.password, validPassword);
     expect(cubit.state.status, LoginStatus.initial);
-  });
-
-  test('PasswordChanged to empty', () {
-    cubit.passwordChanged(emptyPassword);
-
-    expect(cubit.state.status, LoginStatus.error);
   });
 
   test('Login with email & password valid', () async {

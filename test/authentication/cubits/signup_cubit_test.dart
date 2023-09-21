@@ -9,14 +9,11 @@ void main() {
   late SignupCubit cubit;
 
   const validName = 'testUser';
-  const emptyName = '';
 
   const validEmail = 'valid@email.com';
   const invalidEmail = 'invalid@email.com';
-  const emptyEmail = '';
 
   const validPassword = 'password123';
-  const emptyPassword = '';
 
   setUp(() => cubit = SignupCubit(authRepoMock));
 
@@ -33,12 +30,6 @@ void main() {
     expect(cubit.state.status, SignupStatus.initial);
   });
 
-  test('NameChanged to empty', () {
-    cubit.nameChanged(emptyName);
-
-    expect(cubit.state.status, SignupStatus.error);
-  });
-
   test('EmailChanged valid', () {
     cubit.emailChanged(validEmail);
 
@@ -46,23 +37,11 @@ void main() {
     expect(cubit.state.status, SignupStatus.initial);
   });
 
-  test('EmailChanged to empty', () {
-    cubit.emailChanged(emptyEmail);
-
-    expect(cubit.state.status, SignupStatus.error);
-  });
-
   test('PasswordChanged valid', () {
     cubit.passwordChanged(validPassword);
 
     expect(cubit.state.password, validPassword);
     expect(cubit.state.status, SignupStatus.initial);
-  });
-
-  test('PasswordChanged to empty', () {
-    cubit.passwordChanged(emptyPassword);
-
-    expect(cubit.state.status, SignupStatus.error);
   });
 
   test('Signup valid', () async {
