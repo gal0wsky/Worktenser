@@ -61,7 +61,22 @@ void main() {
             projectsTime: 37));
   });
 
-  test('Load projects catch error', () async {
+  test('Load projects catch Firestore error', () async {
+    when(repoMock.loadProjects(fakeUser))
+        .thenAnswer((realInvocation) async => [fakeProj1, fakeProj2]);
+
+    when(localStorageMock.save(any))
+        .thenAnswer((realInvocation) async => false);
+
+    await cubit.loadProjects(fakeUser);
+
+    expect(
+        cubit.state,
+        const ProjectsLoadingError(
+            message: "Couldn't create local backup of projects"));
+  });
+
+  test('Load projects catch IProjectsLocalStorage error', () async {
     when(repoMock.loadProjects(fakeUser)).thenThrow(Exception());
 
     await cubit.loadProjects(fakeUser);
@@ -88,8 +103,20 @@ void main() {
     expect(cubit.state, ProjectsReload());
   });
 
-  test('Add project catch error', () async {
+  test('Add project catch Firestore error', () async {
     when(repoMock.addProject(fakeProj1)).thenThrow(Exception());
+
+    await cubit.addProject(fakeProj1);
+
+    expect(cubit.state,
+        const ProjectsLoadingError(message: "Couldn't add the project"));
+  });
+
+  test('Add project catch IProjectsLocalStorage error', () async {
+    when(repoMock.addProject(any)).thenAnswer((realInvocation) async => true);
+
+    when(localStorageMock.save(any))
+        .thenAnswer((realInvocation) async => false);
 
     await cubit.addProject(fakeProj1);
 
@@ -117,9 +144,22 @@ void main() {
     expect(cubit.state, ProjectsReload());
   });
 
-  test('Update project invalid', () async {
+  test('Update project Firestore error', () async {
     when(repoMock.updateProject(fakeProj1))
         .thenAnswer((realInvocation) async => false);
+
+    // when(localStorageMock.update(any))
+    //     .thenAnswer((realInvocation) async => false);
+
+    await cubit.updateProject(fakeProj1);
+
+    expect(cubit.state,
+        const ProjectsLoadingError(message: "Couldn't update the project"));
+  });
+
+  test('Update project IProjectsLocalStorage error', () async {
+    when(repoMock.updateProject(fakeProj1))
+        .thenAnswer((realInvocation) async => true);
 
     when(localStorageMock.update(any))
         .thenAnswer((realInvocation) async => false);
@@ -150,9 +190,19 @@ void main() {
     expect(cubit.state, ProjectsReload());
   });
 
-  test('Delete project invalid', () async {
+  test('Delete project Firestore error', () async {
     when(repoMock.deleteProject(fakeProj1))
         .thenAnswer((realInvocation) async => false);
+
+    await cubit.deleteProject(fakeProj1);
+
+    expect(cubit.state,
+        const ProjectsLoadingError(message: "Couldn't delete the project"));
+  });
+
+  test('Delete project IProjectsLocalStorage error', () async {
+    when(repoMock.deleteProject(fakeProj1))
+        .thenAnswer((realInvocation) async => true);
 
     when(localStorageMock.delete(any))
         .thenAnswer((realInvocation) async => false);
