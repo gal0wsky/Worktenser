@@ -6,18 +6,20 @@ import 'package:worktenser/domain/authentication/models/user_model.dart';
 import 'package:worktenser/domain/authentication/repositories/auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
+import '../../projects/cubits/projects_cubit_test.mocks.dart';
 import 'auth_bloc_test.mocks.dart';
 
 @GenerateNiceMocks(
     [MockSpec<AuthRepository>(), MockSpec<firebase_auth.FirebaseAuth>()])
 void main() {
   final authRepoMock = MockAuthRepository();
-  final firebaseAuthMock = MockFirebaseAuth();
+  final localStorageMock = MockIProjectsLocalStorage();
 
   test('Create AuthBloc unauthenticated', () {
     when(authRepoMock.currentUser).thenAnswer((realInvocation) => User.empty);
 
-    final bloc = AuthBloc(authRepository: authRepoMock);
+    final bloc = AuthBloc(
+        authRepository: authRepoMock, projectsLocalStorage: localStorageMock);
 
     expect(bloc.state, const AuthState.unauthenticated());
   });
@@ -27,7 +29,8 @@ void main() {
 
     when(authRepoMock.currentUser).thenAnswer((realInvocation) => fakeUser);
 
-    final bloc = AuthBloc(authRepository: authRepoMock);
+    final bloc = AuthBloc(
+        authRepository: authRepoMock, projectsLocalStorage: localStorageMock);
 
     expect(bloc.state, const AuthState.authenticated(fakeUser));
     expect(bloc.state.user, fakeUser);
@@ -38,7 +41,8 @@ void main() {
 
     when(authRepoMock.currentUser).thenAnswer((realInvocation) => fakeUser);
 
-    final bloc = AuthBloc(authRepository: authRepoMock);
+    final bloc = AuthBloc(
+        authRepository: authRepoMock, projectsLocalStorage: localStorageMock);
 
     bloc.add(const AppUserChanged(fakeUser));
 
@@ -50,7 +54,8 @@ void main() {
 
     when(authRepoMock.currentUser).thenAnswer((realInvocation) => fakeUser);
 
-    final bloc = AuthBloc(authRepository: authRepoMock);
+    final bloc = AuthBloc(
+        authRepository: authRepoMock, projectsLocalStorage: localStorageMock);
 
     bloc.add(const AppUserChanged(fakeUser));
 
@@ -66,7 +71,7 @@ void main() {
   //   when(authRepoMock.user)
   //       .thenAnswer((realInvocation) => Stream<User>.value(User.empty));
 
-  //   final bloc = AuthBloc(authRepository: authRepoMock);
+  //   final bloc = AuthBloc(authRepository: authRepoMock, projectsLocalStorage: localStorageMock);
 
   //   // expect(bloc.state, const AuthState.authenticated(fakeUser));
 

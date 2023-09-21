@@ -96,7 +96,7 @@ class EditProjectPage extends StatelessWidget {
                       userId: context.read<AuthBloc>().state.user.id,
                     );
 
-                    context.read<ProjectsCubit>().addProject(updatedProject);
+                    context.read<ProjectsCubit>().updateProject(updatedProject);
                     Navigator.of(context).pop();
                   },
                   child: const Text('SAVE'),

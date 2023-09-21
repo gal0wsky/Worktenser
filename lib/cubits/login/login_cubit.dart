@@ -12,19 +12,11 @@ class LoginCubit extends Cubit<LoginState> {
         super(LoginState.initial());
 
   void emailChanged(String value) {
-    if (value.isEmpty) {
-      emit(state.copyWith(status: LoginStatus.error));
-    } else {
-      emit(state.copyWith(email: value, status: LoginStatus.initial));
-    }
+    emit(state.copyWith(email: value, status: LoginStatus.initial));
   }
 
   void passwordChanged(String value) {
-    if (value.isEmpty) {
-      emit(state.copyWith(status: LoginStatus.error));
-    } else {
-      emit(state.copyWith(password: value, status: LoginStatus.initial));
-    }
+    emit(state.copyWith(password: value, status: LoginStatus.initial));
   }
 
   Future logInWithEmailAndPassword() async {

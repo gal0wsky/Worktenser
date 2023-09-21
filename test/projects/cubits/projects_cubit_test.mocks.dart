@@ -9,8 +9,10 @@ import 'package:mockito/mockito.dart' as _i1;
 import 'package:worktenser/domain/authentication/models/user_model.dart' as _i5;
 import 'package:worktenser/domain/projects/src/models/project_model.dart'
     as _i4;
-import 'package:worktenser/domain/projects/src/repositories/projects_repository.dart'
+import 'package:worktenser/domain/projects/src/repositories/iprojects_repository.dart'
     as _i2;
+import 'package:worktenser/domain/projects/src/services/iprojects_local_storage.dart'
+    as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -23,11 +25,11 @@ import 'package:worktenser/domain/projects/src/repositories/projects_repository.
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-/// A class which mocks [ProjectsRepository].
+/// A class which mocks [IProjectsRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockProjectsRepository extends _i1.Mock
-    implements _i2.ProjectsRepository {
+class MockIProjectsRepository extends _i1.Mock
+    implements _i2.IProjectsRepository {
   @override
   _i3.Future<List<_i4.Project>> loadProjects(_i5.User? user) =>
       (super.noSuchMethod(
@@ -62,6 +64,58 @@ class MockProjectsRepository extends _i1.Mock
         Invocation.method(
           #deleteProject,
           [project],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+        returnValueForMissingStub: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+}
+
+/// A class which mocks [IProjectsLocalStorage].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockIProjectsLocalStorage extends _i1.Mock
+    implements _i6.IProjectsLocalStorage {
+  @override
+  List<_i4.Project> load() => (super.noSuchMethod(
+        Invocation.method(
+          #load,
+          [],
+        ),
+        returnValue: <_i4.Project>[],
+        returnValueForMissingStub: <_i4.Project>[],
+      ) as List<_i4.Project>);
+  @override
+  _i3.Future<bool> save(List<_i4.Project>? projects) => (super.noSuchMethod(
+        Invocation.method(
+          #save,
+          [projects],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+        returnValueForMissingStub: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+  @override
+  _i3.Future<bool> update(_i4.Project? project) => (super.noSuchMethod(
+        Invocation.method(
+          #update,
+          [project],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+        returnValueForMissingStub: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+  @override
+  _i3.Future<bool> delete(_i4.Project? project) => (super.noSuchMethod(
+        Invocation.method(
+          #delete,
+          [project],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+        returnValueForMissingStub: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+  @override
+  _i3.Future<bool> clear() => (super.noSuchMethod(
+        Invocation.method(
+          #clear,
+          [],
         ),
         returnValue: _i3.Future<bool>.value(false),
         returnValueForMissingStub: _i3.Future<bool>.value(false),

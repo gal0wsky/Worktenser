@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:worktenser/blocs/auth/auth_bloc.dart';
 import 'package:worktenser/config/colors.dart';
 import 'package:worktenser/cubits/projects/projects_cubit.dart';
 import 'package:worktenser/domain/projects/src/models/project_model.dart';
@@ -8,17 +9,29 @@ import 'package:worktenser/domain/timeCounter/timeCounter.dart';
 import 'package:worktenser/pages/editProjectPage/edit_project_page.dart';
 
 class DetailsPage extends StatelessWidget {
-  final Project project;
+  late Project project;
 
-  const DetailsPage({super.key, required this.project});
+  DetailsPage({super.key, required this.project});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primary,
-      body: BlocBuilder<ProjectsCubit, ProjectsState>(
+      body: BlocConsumer<ProjectsCubit, ProjectsState>(
+        listener: (context, state) async {
+          if (state is ProjectsReload) {
+            await context
+                .read<ProjectsCubit>()
+                .loadProjects(context.read<AuthBloc>().state.user);
+          }
+          if (state is ProjectsLoaded) {
+            final state = context.read<ProjectsCubit>().state as ProjectsLoaded;
+            project =
+                state.projects.firstWhere((proj) => proj.id == project.id);
+          }
+        },
         builder: (context, state) {
-          if (state is ProjectsLoading) {
+          if (state is ProjectsLoading || state is ProjectsReload) {
             return const CircularProgressIndicator();
           } else if (state is ProjectsLoadingError) {
             return Text(state.message);

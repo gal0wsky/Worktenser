@@ -1,16 +1,19 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:worktenser/domain/authentication/authentication.dart';
-import 'package:worktenser/domain/projects/src/models/models.dart';
-import 'package:worktenser/domain/projects/src/repositories/iprojects_repository.dart';
+import 'package:worktenser/domain/projects/projects.dart';
 
 part 'projects_state.dart';
 
 class ProjectsCubit extends Cubit<ProjectsState> {
   final IProjectsRepository _projectsRepository;
+  final IProjectsLocalStorage _localStorage;
 
-  ProjectsCubit({required IProjectsRepository projectsRepository})
+  ProjectsCubit(
+      {required IProjectsRepository projectsRepository,
+      required IProjectsLocalStorage projectsLocalStorage})
       : _projectsRepository = projectsRepository,
+        _localStorage = projectsLocalStorage,
         super(ProjectsInitial());
 
   Future<void> loadProjects(User user) async {
@@ -21,11 +24,18 @@ class ProjectsCubit extends Cubit<ProjectsState> {
     try {
       final projects = await _projectsRepository.loadProjects(user);
 
-      emit(ProjectsLoaded(
-        projects: projects,
-        projectsCount: projects.length,
-        projectsTime: _countProjectsTotalTime(projects),
-      ));
+      final savedLocally = await _localStorage.save(projects);
+
+      if (!savedLocally) {
+        emit(const ProjectsLoadingError(
+            message: "Couldn't create local backup of projects"));
+      } else {
+        emit(ProjectsLoaded(
+          projects: projects,
+          projectsCount: projects.length,
+          projectsTime: _countProjectsTotalTime(projects),
+        ));
+      }
     } catch (e) {
       emit(const ProjectsLoadingError());
     }
@@ -37,11 +47,23 @@ class ProjectsCubit extends Cubit<ProjectsState> {
     emit(ProjectsLoading());
 
     try {
-      final result = await _projectsRepository.addProject(project);
+      final addedToFirestore = await _projectsRepository.addProject(project);
 
-      emit(result ? ProjectsReload() : const ProjectsLoadingError());
+      if (!addedToFirestore) {
+        emit(const ProjectsLoadingError(message: "Couldn't add the project"));
+      } else {
+        final localProjects = _localStorage.load();
+        final addedToLocalCopy =
+            await _localStorage.save(localProjects..add(project));
+
+        emit(addedToLocalCopy
+            ? ProjectsReload()
+            : const ProjectsLoadingError(message: "Couldn't add the project"));
+      }
     } catch (e) {
-      emit(const ProjectsLoadingError());
+      emit(
+        const ProjectsLoadingError(message: "Couldn't add the project"),
+      );
     }
   }
 
@@ -51,14 +73,23 @@ class ProjectsCubit extends Cubit<ProjectsState> {
     emit(ProjectsLoading());
 
     try {
-      final result = await _projectsRepository.updateProject(project);
+      final updatedInFirestore =
+          await _projectsRepository.updateProject(project);
 
-      emit(
-        result
-            ? ProjectsReload()
-            : const ProjectsLoadingError(
-                message: "Couldn't update the project"),
-      );
+      if (!updatedInFirestore) {
+        emit(
+          const ProjectsLoadingError(message: "Couldn't update the project"),
+        );
+      } else {
+        final updatedLocally = await _localStorage.update(project);
+
+        emit(
+          updatedLocally
+              ? ProjectsReload()
+              : const ProjectsLoadingError(
+                  message: "Couldn't update the project"),
+        );
+      }
     } catch (e) {
       emit(const ProjectsLoadingError());
     }
@@ -70,14 +101,23 @@ class ProjectsCubit extends Cubit<ProjectsState> {
     emit(ProjectsLoading());
 
     try {
-      final result = await _projectsRepository.deleteProject(project);
+      final deletedFromFirestore =
+          await _projectsRepository.deleteProject(project);
 
-      emit(
-        result
-            ? ProjectsReload()
-            : const ProjectsLoadingError(
-                message: "Couldn't delete the project"),
-      );
+      if (!deletedFromFirestore) {
+        emit(
+          const ProjectsLoadingError(message: "Couldn't delete the project"),
+        );
+      } else {
+        final deletedFromLocalBackup = await _localStorage.delete(project);
+
+        emit(
+          deletedFromLocalBackup
+              ? ProjectsReload()
+              : const ProjectsLoadingError(
+                  message: "Couldn't delete the project"),
+        );
+      }
     } catch (e) {
       emit(const ProjectsLoadingError());
     }

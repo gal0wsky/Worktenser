@@ -3,16 +3,17 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:worktenser/cubits/projects/projects_cubit.dart';
 import 'package:worktenser/domain/authentication/models/user_model.dart';
-import 'package:worktenser/domain/projects/src/models/project_model.dart';
-import 'package:worktenser/domain/projects/src/repositories/projects_repository.dart';
+import 'package:worktenser/domain/projects/projects.dart';
 
 import 'projects_cubit_test.mocks.dart';
 
-@GenerateNiceMocks([MockSpec<ProjectsRepository>()])
+@GenerateNiceMocks(
+    [MockSpec<IProjectsRepository>(), MockSpec<IProjectsLocalStorage>()])
 void main() {
   late ProjectsCubit cubit;
 
-  final repoMock = MockProjectsRepository();
+  final repoMock = MockIProjectsRepository();
+  final localStorageMock = MockIProjectsLocalStorage();
 
   const fakeUser = User(id: '123');
 
@@ -32,12 +33,14 @@ void main() {
     description: 'My test project',
   );
 
-  setUp(() => cubit = ProjectsCubit(projectsRepository: repoMock));
+  setUp(() => cubit = ProjectsCubit(
+      projectsRepository: repoMock, projectsLocalStorage: localStorageMock));
 
   tearDown(() => cubit.close());
 
   test('Create cubit', () {
-    final projectsCubit = ProjectsCubit(projectsRepository: repoMock);
+    final projectsCubit = ProjectsCubit(
+        projectsRepository: repoMock, projectsLocalStorage: localStorageMock);
 
     expect(projectsCubit.state, ProjectsInitial());
   });
@@ -45,6 +48,8 @@ void main() {
   test('Load projects valid', () async {
     when(repoMock.loadProjects(fakeUser))
         .thenAnswer((realInvocation) async => [fakeProj1, fakeProj2]);
+
+    when(localStorageMock.save(any)).thenAnswer((realInvocation) async => true);
 
     await cubit.loadProjects(fakeUser);
 
@@ -76,6 +81,8 @@ void main() {
     when(repoMock.addProject(fakeProj1))
         .thenAnswer((realInvocation) async => true);
 
+    when(localStorageMock.save(any)).thenAnswer((realInvocation) async => true);
+
     await cubit.addProject(fakeProj1);
 
     expect(cubit.state, ProjectsReload());
@@ -86,7 +93,8 @@ void main() {
 
     await cubit.addProject(fakeProj1);
 
-    expect(cubit.state, const ProjectsLoadingError());
+    expect(cubit.state,
+        const ProjectsLoadingError(message: "Couldn't add the project"));
   });
 
   test('Add project active loading', () async {
@@ -101,6 +109,9 @@ void main() {
     when(repoMock.updateProject(fakeProj1))
         .thenAnswer((realInvocation) async => true);
 
+    when(localStorageMock.update(any))
+        .thenAnswer((realInvocation) async => true);
+
     await cubit.updateProject(fakeProj1);
 
     expect(cubit.state, ProjectsReload());
@@ -108,6 +119,9 @@ void main() {
 
   test('Update project invalid', () async {
     when(repoMock.updateProject(fakeProj1))
+        .thenAnswer((realInvocation) async => false);
+
+    when(localStorageMock.update(any))
         .thenAnswer((realInvocation) async => false);
 
     await cubit.updateProject(fakeProj1);
@@ -128,6 +142,9 @@ void main() {
     when(repoMock.deleteProject(fakeProj1))
         .thenAnswer((realInvocation) async => true);
 
+    when(localStorageMock.delete(any))
+        .thenAnswer((realInvocation) async => true);
+
     await cubit.deleteProject(fakeProj1);
 
     expect(cubit.state, ProjectsReload());
@@ -135,6 +152,9 @@ void main() {
 
   test('Delete project invalid', () async {
     when(repoMock.deleteProject(fakeProj1))
+        .thenAnswer((realInvocation) async => false);
+
+    when(localStorageMock.delete(any))
         .thenAnswer((realInvocation) async => false);
 
     await cubit.deleteProject(fakeProj1);
