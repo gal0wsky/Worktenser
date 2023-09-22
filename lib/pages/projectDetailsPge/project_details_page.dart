@@ -1,6 +1,8 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:worktenser/blocs/auth/auth_bloc.dart';
 import 'package:worktenser/config/colors.dart';
 import 'package:worktenser/cubits/projects/projects_cubit.dart';
@@ -8,10 +10,20 @@ import 'package:worktenser/domain/projects/src/models/project_model.dart';
 import 'package:worktenser/domain/timeCounter/timeCounter.dart';
 import 'package:worktenser/pages/editProjectPage/edit_project_page.dart';
 
-class DetailsPage extends StatelessWidget {
-  late Project project;
+class DetailsPage extends StatefulWidget {
+  final Project project;
 
-  DetailsPage({super.key, required this.project});
+  const DetailsPage({
+    Key? key,
+    required this.project,
+  }) : super(key: key);
+
+  @override
+  State<DetailsPage> createState() => _DetailsPageState();
+}
+
+class _DetailsPageState extends State<DetailsPage> {
+  late Project project = widget.project;
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +38,10 @@ class DetailsPage extends StatelessWidget {
           }
           if (state is ProjectsLoaded) {
             final state = context.read<ProjectsCubit>().state as ProjectsLoaded;
-            project =
-                state.projects.firstWhere((proj) => proj.id == project.id);
+            setState(() {
+              project =
+                  state.projects.firstWhere((proj) => proj.id == project.id);
+            });
           }
         },
         builder: (context, state) {
