@@ -56,6 +56,10 @@ void _onStart(ServiceInstance service) async {
     }
   });
 
+  if (service is AndroidServiceInstance) {
+    service.setAsForegroundService();
+  }
+
   service.on('stopTimeCounter').listen((event) async {
     await _onStop();
     service.stopSelf();
