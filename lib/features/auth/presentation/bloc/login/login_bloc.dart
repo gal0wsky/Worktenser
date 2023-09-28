@@ -23,7 +23,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<GoogleLoginRequested>(_onGoogleLoginRequested);
   }
 
-  FutureOr<void> _onCredentialsLoginRequested(
+  Future<void> _onCredentialsLoginRequested(
       CredentialsLoginRequested event, Emitter<LoginState> emit) async {
     if (state is LoginSubmitting) return;
 

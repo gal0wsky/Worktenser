@@ -14,7 +14,12 @@ class LogoutUseCase extends UserCase<bool, void> {
 
   @override
   Future<bool> call({void params}) async {
-    await _projectsLocalStorage.clear();
+    final storageCleared = await _projectsLocalStorage.clear();
+
+    if (!storageCleared) {
+      return false;
+    }
+
     return _authRepository.logOut();
   }
 }
