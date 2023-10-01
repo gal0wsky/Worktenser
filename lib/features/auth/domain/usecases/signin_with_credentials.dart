@@ -2,7 +2,7 @@ import 'package:worktenser/core/usecase/usecase.dart';
 import 'package:worktenser/features/auth/domain/entities/login.dart';
 import 'package:worktenser/features/auth/domain/repository/auth_repository.dart';
 
-class SigninWithCredentialsUseCase implements UserCase<bool, LoginEntity> {
+class SigninWithCredentialsUseCase implements UseCase<bool, LoginEntity> {
   final AuthRepository _authRepository;
 
   SigninWithCredentialsUseCase({required AuthRepository authRepository})

@@ -4,7 +4,7 @@ class UserModel extends UserEntity {
   const UserModel(
       {required String id, String? name, String? email, String? password})
       : super(
-          id: '',
+          id: id,
           name: name,
           email: email,
           password: password,

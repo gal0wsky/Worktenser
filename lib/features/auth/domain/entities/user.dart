@@ -14,5 +14,5 @@ class UserEntity extends Equatable {
   bool get isEmpty => this == UserEntity.empty;
 
   @override
-  List<Object?> get props => [id, email, password];
+  List<Object?> get props => [id, name, email, password];
 }
