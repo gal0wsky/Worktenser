@@ -6,12 +6,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worktenser/bloc_observer.dart';
-import 'package:worktenser/blocs/auth/auth_bloc.dart';
+// import 'package:worktenser/blocs/auth/auth_bloc.dart';
 import 'package:worktenser/config/routes.dart';
 import 'package:worktenser/cubits/projects/projects_cubit.dart';
-import 'package:worktenser/domain/authentication/authentication.dart';
 import 'package:worktenser/domain/projects/projects.dart';
 import 'package:worktenser/domain/timeCounter/timeCounter.dart';
+import 'package:worktenser/injection_container.dart';
+
+import 'features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'features/projects/presentation/bloc/projects/projects_bloc.dart';
 
 Future main() async {
   Bloc.observer = AppBlocObserver();
@@ -19,8 +22,7 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  final authRepository = AuthRepository();
-  final projectsRepository = ProjectsRepository();
+  await initializeDependiencies();
 
   final sharedPreferences = await SharedPreferences.getInstance();
 
@@ -59,49 +61,42 @@ Future main() async {
     },
   );
 
-  runApp(App(
-    authRepository: authRepository,
-    projectsRepository: projectsRepository,
-    projectsLocalStorage: projectsLocalStorage,
-  ));
+  runApp(const App());
 }
 
 class App extends StatelessWidget {
-  final AuthRepository _authRepository;
-  final ProjectsRepository _projectsRepository;
-  final ProjectsLocalStorage _projectsLocalStorage;
-
-  const App(
-      {Key? key,
-      required AuthRepository authRepository,
-      required ProjectsRepository projectsRepository,
-      required ProjectsLocalStorage projectsLocalStorage})
-      : _authRepository = authRepository,
-        _projectsRepository = projectsRepository,
-        _projectsLocalStorage = projectsLocalStorage,
-        super(key: key);
+  const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: _authRepository,
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => AuthBloc(
-              authRepository: _authRepository,
-              projectsLocalStorage: _projectsLocalStorage,
-            ),
-          ),
-          BlocProvider(
-            create: (context) => ProjectsCubit(
-              projectsRepository: _projectsRepository,
-              projectsLocalStorage: _projectsLocalStorage,
-            ),
-          )
-        ],
-        child: const AppView(),
-      ),
+    // return RepositoryProvider.value(
+    //   value: _authRepository,
+    //   child: MultiBlocProvider(
+    //     providers: [
+    //       BlocProvider(
+    //         create: (context) => BlocProvider.of<AuthBloc>(context),
+    //       ),
+    //       BlocProvider(
+    //         create: (context) => ProjectsCubit(
+    //           projectsRepository: _projectsRepository,
+    //           projectsLocalStorage: _projectsLocalStorage,
+    //         ),
+    //       )
+    //     ],
+    //     child: const AppView(),
+    //   ),
+    // );
+
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => sl(),
+        ),
+        BlocProvider<ProjectsBloc>(
+          create: (context) => sl(),
+        )
+      ],
+      child: const AppView(),
     );
   }
 }
@@ -112,8 +107,7 @@ class AppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _initializeAsyncDependencies(
-            projectsCubit: context.read<ProjectsCubit>()),
+        future: _initializeAsyncDependencies(),
         builder: ((context, snapshot) {
           return MaterialApp(
             title: 'Worktenser',
@@ -126,7 +120,9 @@ class AppView extends StatelessWidget {
   }
 }
 
-Future<void> _initializeAsyncDependencies(
-    {required ProjectsCubit projectsCubit}) async {
-  await initializeTimeCounterService(projectsCubit);
-}
+Future<void> _initializeAsyncDependencies() async {}
+
+// Future<void> _initializeAsyncDependencies(
+//     {required ProjectsCubit projectsCubit}) async {
+//   await initializeTimeCounterService(projectsCubit);
+// }

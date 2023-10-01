@@ -15,7 +15,6 @@ import 'auth_usecases_test.mocks.dart';
 @GenerateMocks([AuthRepository, IProjectsLocalStorage])
 void main() {
   final authRepoMock = MockAuthRepository();
-  final storageMock = MockIProjectsLocalStorage();
 
   test('Signup usecase successful test', () async {
     const fakeSignupData =
@@ -103,10 +102,8 @@ void main() {
 
   test('Logout usecase successful test', () async {
     when(authRepoMock.logOut()).thenAnswer((realInvocation) async => true);
-    when(storageMock.clear()).thenAnswer((realInvocation) async => true);
 
-    final LogoutUseCase useCase = LogoutUseCase(
-        authRepository: authRepoMock, projectsLocalStorage: storageMock);
+    final LogoutUseCase useCase = LogoutUseCase(authRepository: authRepoMock);
 
     final result = await useCase.call();
 
@@ -115,10 +112,8 @@ void main() {
 
   test('Logout usecase invalid storage clear test', () async {
     when(authRepoMock.logOut()).thenAnswer((realInvocation) async => true);
-    when(storageMock.clear()).thenAnswer((realInvocation) async => false);
 
-    final LogoutUseCase useCase = LogoutUseCase(
-        authRepository: authRepoMock, projectsLocalStorage: storageMock);
+    final LogoutUseCase useCase = LogoutUseCase(authRepository: authRepoMock);
 
     final result = await useCase.call();
 
@@ -127,10 +122,8 @@ void main() {
 
   test('Logout usecase invalid Firebase logout test', () async {
     when(authRepoMock.logOut()).thenAnswer((realInvocation) async => false);
-    when(storageMock.clear()).thenAnswer((realInvocation) async => true);
 
-    final LogoutUseCase useCase = LogoutUseCase(
-        authRepository: authRepoMock, projectsLocalStorage: storageMock);
+    final LogoutUseCase useCase = LogoutUseCase(authRepository: authRepoMock);
 
     final result = await useCase.call();
 
