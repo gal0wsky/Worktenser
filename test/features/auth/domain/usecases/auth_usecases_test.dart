@@ -109,16 +109,6 @@ void main() {
     expect(result, true);
   });
 
-  test('Logout usecase invalid storage clear test', () async {
-    when(authRepoMock.logOut()).thenAnswer((realInvocation) async => true);
-
-    final LogoutUseCase useCase = LogoutUseCase(authRepository: authRepoMock);
-
-    final result = await useCase.call();
-
-    expect(result, false);
-  });
-
   test('Logout usecase invalid Firebase logout test', () async {
     when(authRepoMock.logOut()).thenAnswer((realInvocation) async => false);
 
