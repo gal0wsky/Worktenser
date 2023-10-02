@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:worktenser/domain/projects/projects.dart';
 import 'package:worktenser/features/auth/domain/entities/login.dart';
 import 'package:worktenser/features/auth/domain/entities/signup.dart';
 import 'package:worktenser/features/auth/domain/repository/auth_repository.dart';
@@ -12,7 +11,7 @@ import 'package:worktenser/features/auth/domain/usecases/signup_with_credentials
 
 import 'auth_usecases_test.mocks.dart';
 
-@GenerateMocks([AuthRepository, IProjectsLocalStorage])
+@GenerateMocks([AuthRepository])
 void main() {
   final authRepoMock = MockAuthRepository();
 

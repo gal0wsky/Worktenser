@@ -6,10 +6,6 @@
 import 'dart:async' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:worktenser/domain/projects/src/models/project_model.dart'
-    as _i8;
-import 'package:worktenser/domain/projects/src/services/iprojects_local_storage.dart'
-    as _i7;
 import 'package:worktenser/features/auth/domain/entities/login.dart' as _i6;
 import 'package:worktenser/features/auth/domain/entities/signup.dart' as _i5;
 import 'package:worktenser/features/auth/domain/entities/user.dart' as _i2;
@@ -100,57 +96,6 @@ class MockAuthRepository extends _i1.Mock implements _i3.AuthRepository {
   _i4.Future<bool> logOut() => (super.noSuchMethod(
         Invocation.method(
           #logOut,
-          [],
-        ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
-}
-
-/// A class which mocks [IProjectsLocalStorage].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockIProjectsLocalStorage extends _i1.Mock
-    implements _i7.IProjectsLocalStorage {
-  MockIProjectsLocalStorage() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  List<_i8.Project> load() => (super.noSuchMethod(
-        Invocation.method(
-          #load,
-          [],
-        ),
-        returnValue: <_i8.Project>[],
-      ) as List<_i8.Project>);
-  @override
-  _i4.Future<bool> save(List<_i8.Project>? projects) => (super.noSuchMethod(
-        Invocation.method(
-          #save,
-          [projects],
-        ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
-  @override
-  _i4.Future<bool> update(_i8.Project? project) => (super.noSuchMethod(
-        Invocation.method(
-          #update,
-          [project],
-        ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
-  @override
-  _i4.Future<bool> delete(_i8.Project? project) => (super.noSuchMethod(
-        Invocation.method(
-          #delete,
-          [project],
-        ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
-  @override
-  _i4.Future<bool> clear() => (super.noSuchMethod(
-        Invocation.method(
-          #clear,
           [],
         ),
         returnValue: _i4.Future<bool>.value(false),

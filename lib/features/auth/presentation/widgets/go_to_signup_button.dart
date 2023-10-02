@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:worktenser/config/colors.dart';
-import 'package:worktenser/pages/signupPage/signup_page.dart';
+import 'package:worktenser/features/auth/presentation/pages/signup_page.dart';
 
 class GoToSignupButton extends StatelessWidget {
   const GoToSignupButton({super.key});
