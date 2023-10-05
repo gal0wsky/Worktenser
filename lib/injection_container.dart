@@ -10,6 +10,10 @@ import 'package:worktenser/features/projects/domain/repository/projects_reposito
 import 'package:worktenser/features/projects/domain/usecases/add_project.dart';
 import 'package:worktenser/features/projects/domain/usecases/get_projects_total_time.dart';
 import 'package:worktenser/features/projects/domain/usecases/load_projects.dart';
+import 'package:worktenser/features/timeCounter/data/presentation/bloc/time_counter/time_counter_bloc.dart';
+import 'package:worktenser/features/timeCounter/data/repository/time_counter_repository_impl.dart';
+import 'package:worktenser/features/timeCounter/domain/repository/time_counter_repository.dart';
+import 'package:worktenser/features/timeCounter/domain/usecases/start_counter.dart';
 
 import 'features/auth/domain/repository/auth_repository.dart';
 import 'features/auth/presentation/bloc/auth/auth_bloc.dart';
@@ -17,6 +21,7 @@ import 'features/auth/presentation/bloc/signup/signup_bloc.dart';
 import 'features/projects/domain/usecases/delete_project.dart';
 import 'features/projects/domain/usecases/update_project.dart';
 import 'features/projects/presentation/bloc/projects/projects_bloc.dart';
+import 'features/timeCounter/domain/usecases/stop_counter.dart';
 
 final sl = GetIt.instance;
 
@@ -24,6 +29,8 @@ Future<void> initializeDependiencies() async {
   _registerAuthenticationDependencies();
 
   _registerProjectsDependencies();
+
+  _registerTimeCounterDependencies();
 }
 
 void _registerAuthenticationDependencies() {
@@ -82,4 +89,19 @@ void _registerProjectsDependencies() {
         deleteProjectUseCase: sl(),
         getProjectsTotalTimeUseCase: sl(),
       ));
+}
+
+void _registerTimeCounterDependencies() {
+  // Dependencies
+  sl.registerSingleton<TimeCounterRepository>(TimeCounterRepositoryImpl());
+
+  // Usecases
+  sl.registerSingleton<StartProjectTimeCounterUseCase>(
+      StartProjectTimeCounterUseCase());
+
+  sl.registerSingleton<StopProjectTimeCounterUseCase>(
+      StopProjectTimeCounterUseCase());
+
+  // Bloc
+  sl.registerFactory<TimeCounterBloc>(() => TimeCounterBloc());
 }

@@ -6,10 +6,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/bloc_observer.dart';
 import 'package:worktenser/config/routes.dart';
+import 'package:worktenser/features/timeCounter/data/presentation/bloc/time_counter/time_counter_bloc.dart';
 import 'package:worktenser/injection_container.dart';
 
 import 'features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'features/projects/presentation/bloc/projects/projects_bloc.dart';
+import 'features/timeCounter/data/data_sources/counter_service_provider.dart';
 
 Future main() async {
   Bloc.observer = AppBlocObserver();
@@ -54,7 +56,8 @@ class App extends StatelessWidget {
         ),
         BlocProvider<ProjectsBloc>(
           create: (context) => sl(),
-        )
+        ),
+        BlocProvider<TimeCounterBloc>(create: (context) => sl()),
       ],
       child: const AppView(),
     );
@@ -80,4 +83,6 @@ class AppView extends StatelessWidget {
   }
 }
 
-Future<void> _initializeAsyncDependencies() async {}
+Future<void> _initializeAsyncDependencies() async {
+  await initializeTimeCounterService(sl());
+}

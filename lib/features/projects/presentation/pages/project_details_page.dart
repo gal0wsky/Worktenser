@@ -5,6 +5,7 @@ import 'package:worktenser/config/colors.dart';
 import 'package:worktenser/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:worktenser/features/projects/domain/entities/project.dart';
 import 'package:worktenser/features/projects/presentation/bloc/projects/projects_bloc.dart';
+import 'package:worktenser/features/timeCounter/data/presentation/bloc/time_counter/time_counter_bloc.dart';
 
 import 'edit_project_page.dart';
 
@@ -155,30 +156,56 @@ class _DetailsPageState extends State<DetailsPage> {
                   ),
                 ),
               ),
-              ElevatedButton(
-                onPressed: () async {
-                  // currentCounterProject = project;
-                  // updateCurrentTimerProject(project);
-                  await FlutterBackgroundService().startService();
+              BlocConsumer<TimeCounterBloc, TimeCounterState>(
+                listener: (context, state) {
+                  if (state is TimeCounterInitial) {
+                    context
+                        .read<TimeCounterBloc>()
+                        .add(InitializeTimeCounter(project: project));
+                  }
                 },
-                child: const Text(
-                  'Start',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  FlutterBackgroundService().invoke('stopTimeCounter');
+                builder: (context, state) {
+                  if (state is TimeCounterInitial) {
+                    context
+                        .read<TimeCounterBloc>()
+                        .add(InitializeTimeCounter(project: project));
+
+                    return const CircularProgressIndicator();
+                  }
+                  if (state is TimeCounterWorking) {
+                    return ElevatedButton(
+                      onPressed: () {
+                        // FlutterBackgroundService().invoke('stopTimeCounter');
+                        context.read<TimeCounterBloc>().add(StopTimeCounter());
+                      },
+                      child: const Text(
+                        'Stop',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  } else if (state is TimeCounterInitialized ||
+                      state is TimeCounterStopped) {
+                    return ElevatedButton(
+                      onPressed: () async {
+                        // currentCounterProject = project;
+                        // updateCurrentTimerProject(project);
+                        // await FlutterBackgroundService().startService();
+                        context.read<TimeCounterBloc>().add(StartTimeCounter());
+                      },
+                      child: const Text(
+                        'Start',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  } else {
+                    return const Text('Something went wrong');
+                  }
                 },
-                child: const Text(
-                  'Stop',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+              )
             ],
           );
         },
