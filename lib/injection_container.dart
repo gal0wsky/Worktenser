@@ -1,4 +1,8 @@
+import 'dart:isolate';
+import 'dart:ui';
+
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worktenser/features/auth/data/repository/auth_repository_impl.dart';
 import 'package:worktenser/features/auth/domain/usecases/logout.dart';
 import 'package:worktenser/features/auth/domain/usecases/signin_with_credentials.dart';
@@ -26,11 +30,13 @@ import 'features/timeCounter/domain/usecases/stop_counter.dart';
 final sl = GetIt.instance;
 
 Future<void> initializeDependiencies() async {
+  final sharedPrefs = await SharedPreferences.getInstance();
+
   _registerAuthenticationDependencies();
 
   _registerProjectsDependencies();
 
-  _registerTimeCounterDependencies();
+  _registerTimeCounterDependencies(sharedPrefs);
 }
 
 void _registerAuthenticationDependencies() {
@@ -91,9 +97,17 @@ void _registerProjectsDependencies() {
       ));
 }
 
-void _registerTimeCounterDependencies() {
+void _registerTimeCounterDependencies(SharedPreferences preferences) {
   // Dependencies
   sl.registerSingleton<TimeCounterRepository>(TimeCounterRepositoryImpl());
+
+  sl.registerSingleton<ReceivePort>(ReceivePort());
+
+  final ReceivePort receivePort = sl();
+
+  IsolateNameServer.removePortNameMapping('timeCounter');
+
+  IsolateNameServer.registerPortWithName(receivePort.sendPort, 'timeCounter');
 
   // Usecases
   sl.registerSingleton<StartProjectTimeCounterUseCase>(
@@ -103,5 +117,6 @@ void _registerTimeCounterDependencies() {
       StopProjectTimeCounterUseCase());
 
   // Bloc
-  sl.registerFactory<TimeCounterBloc>(() => TimeCounterBloc());
+  sl.registerSingleton<TimeCounterBloc>(
+      TimeCounterBloc(preferences: preferences));
 }

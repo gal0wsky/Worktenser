@@ -114,13 +114,29 @@ class _DetailsPageState extends State<DetailsPage> {
                   const SizedBox(
                     width: 10,
                   ),
-                  Text(
-                    project.time.toString(),
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 18,
-                    ),
-                  ),
+                  BlocBuilder<TimeCounterBloc, TimeCounterState>(
+                      builder: (context, state) {
+                    if (state is TimeCounterError) {
+                      return const Text(
+                        'Error',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 18,
+                        ),
+                      );
+                    } else if (state is TimeCounterInitial) {
+                      return const Text('0');
+                    } else {
+                      return Text(
+                        // project.time.toString(),
+                        state.project!.time.toString(),
+                        style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 18,
+                        ),
+                      );
+                    }
+                  }),
                 ],
               ),
               const SizedBox(

@@ -39,6 +39,14 @@ class ProjectEntity extends Equatable {
         'userId': userId
       };
 
+  factory ProjectEntity.fromJson(Map<String, dynamic> json) => ProjectEntity(
+        id: json['id'],
+        name: json['name'],
+        description: json['description'],
+        time: json['time'],
+        userId: json['userId'],
+      );
+
   @override
   List<Object?> get props => [id, name, description, time, userId];
 }

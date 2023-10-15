@@ -19,3 +19,12 @@ final class InitializeTimeCounter extends TimeCounterEvent {
 final class StartTimeCounter extends TimeCounterEvent {}
 
 final class StopTimeCounter extends TimeCounterEvent {}
+
+final class UpdateTimeCounterProject extends TimeCounterEvent {
+  final ProjectEntity project;
+
+  const UpdateTimeCounterProject({required this.project});
+
+  @override
+  List<Object> get props => [project];
+}

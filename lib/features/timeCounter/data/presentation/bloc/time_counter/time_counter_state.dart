@@ -1,39 +1,30 @@
 part of 'time_counter_bloc.dart';
 
 sealed class TimeCounterState extends Equatable {
-  const TimeCounterState();
+  final ProjectEntity? project;
+  // final Isolate? isolate;
+
+  const TimeCounterState({this.project});
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [project];
 }
 
 final class TimeCounterInitial extends TimeCounterState {}
 
 final class TimeCounterInitialized extends TimeCounterState {
-  final ProjectEntity project;
-
-  const TimeCounterInitialized({required this.project});
-
-  @override
-  List<Object> get props => [project];
+  const TimeCounterInitialized({required ProjectEntity project})
+      : super(project: project);
 }
 
 final class TimeCounterStopped extends TimeCounterState {
-  final ProjectEntity project;
-
-  const TimeCounterStopped({required this.project});
-
-  @override
-  List<Object> get props => [project];
+  const TimeCounterStopped({required ProjectEntity project})
+      : super(project: project);
 }
 
 final class TimeCounterWorking extends TimeCounterState {
-  final ProjectEntity project;
-
-  const TimeCounterWorking({required this.project});
-
-  @override
-  List<Object> get props => [project];
+  const TimeCounterWorking({required ProjectEntity project})
+      : super(project: project);
 }
 
 final class TimeCounterError extends TimeCounterState {

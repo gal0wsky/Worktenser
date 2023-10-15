@@ -1,33 +1,30 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_background_service_ios/flutter_background_service_ios.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worktenser/features/projects/data/models/project.dart';
 import 'package:worktenser/features/projects/domain/entities/project.dart';
 import 'package:worktenser/features/timeCounter/data/presentation/bloc/time_counter/time_counter_bloc.dart';
-import 'package:worktenser/injection_container.dart';
 
 const _notificationsChannelName = 'dev.gawlowski.worktenser/notifications';
 const _notificationsChannel = MethodChannel(_notificationsChannelName);
 
 late FlutterBackgroundService _service;
 
-ProjectEntity currentProject =
-    const ProjectModel(name: '', userId: '', time: 0);
-
-late TimeCounterBloc _bloc;
-
 Future<void> initializeTimeCounterService(TimeCounterBloc bloc) async {
-  _bloc = bloc;
-
   _service = FlutterBackgroundService();
   _service.configure(
       iosConfiguration: IosConfiguration(
         autoStart: false,
         onForeground: _onStart,
+        onBackground: _onIosBackground,
       ),
       androidConfiguration: AndroidConfiguration(
         onStart: _onStart,
@@ -36,14 +33,12 @@ Future<void> initializeTimeCounterService(TimeCounterBloc bloc) async {
       ));
 }
 
-void updateCurrentTimerProject(ProjectEntity project) async {
-  if (await _service.isRunning()) {
-    _service.invoke('stopTimeCounter');
-  }
+@pragma('vm:entry-point')
+Future<bool> _onIosBackground(ServiceInstance service) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  DartPluginRegistrant.ensureInitialized();
 
-  // currentCounterProject = project;
-
-  // await _service.startService();
+  return true;
 }
 
 @pragma('vm:entry-point')
@@ -51,9 +46,9 @@ void _onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
 
   service.on('setAsForeground').listen((event) {
-    // if (service is AndroidServiceInstance) {
-    //   service.setAsForegroundService();
-    // }
+    if (service is AndroidServiceInstance) {
+      service.setAsForegroundService();
+    }
   });
 
   if (service is AndroidServiceInstance) {
@@ -65,45 +60,38 @@ void _onStart(ServiceInstance service) async {
     service.stopSelf();
   });
 
-  service.on('setProject').listen(
-    (event) {
-      final project = ProjectModel.fromJson(json: event?[0]);
-      currentProject = project;
-    },
-  );
+  ProjectEntity? project = await _loadProject();
 
-  Timer.periodic(const Duration(seconds: 1), (timer) async {
-    // final TimeCounterBloc bloc = sl();
-    // final state = _bloc.state;
+  if (project != null) {
+    Timer.periodic(const Duration(seconds: 1), (timer) async {
+      int newTime = project!.time;
+      newTime++;
 
-    int newTime = currentProject.time;
-    newTime++;
+      project = project!.copyWith(time: newTime);
 
-    currentProject = currentProject.copyWith(time: newTime);
-
-    if (service is AndroidServiceInstance) {
-      service.setForegroundNotificationInfo(
-          title: 'Working on ${currentProject.name}',
+      if (service is AndroidServiceInstance) {
+        service.setForegroundNotificationInfo(
+          title: 'Working on ${project!.name}',
           content:
-              'Current time: ${ProjectModel.fromEntity(currentProject).printTime()}');
-    }
+              'Current time: ${ProjectModel.fromEntity(project!).printTime()}',
+        );
+      }
 
-    if (service is IOSServiceInstance) {
-      await _sendIosForegroundNotification(
-        title: 'Working on ${currentProject.name}',
-        body:
-            'Current time: ${ProjectModel.fromEntity(currentProject).printTime()}',
-      );
-    }
+      if (service is IOSServiceInstance) {
+        await _sendIosForegroundNotification(
+          title: 'Working on ${project!.name}',
+          body:
+              'Current time: ${ProjectModel.fromEntity(project!).printTime()}',
+        );
+      }
 
-    print(
-        'Current time: ${ProjectModel.fromEntity(currentProject).printTime()}\t${currentProject.time}');
-  });
+      final sendPort = IsolateNameServer.lookupPortByName('timeCounter');
+      sendPort?.send(project!.toJson());
+    });
+  }
 }
 
-Future<void> _onStop() async {
-  print(currentProject.toJson());
-}
+Future<void> _onStop() async {}
 
 Future<void> _sendIosForegroundNotification(
     {required String title, required String body}) async {
@@ -112,6 +100,37 @@ Future<void> _sendIosForegroundNotification(
     'body': body,
   };
 
-  final result =
-      await _notificationsChannel.invokeMethod('localNotification', args);
+  await _notificationsChannel.invokeMethod('localNotification', args);
+}
+
+@pragma('vm:entry-point')
+void runCustomIsolate(Map<String, dynamic> json) {
+  ProjectEntity project = ProjectEntity.fromJson(json);
+
+  Timer.periodic(const Duration(seconds: 1), (timer) {
+    int newTime = project.time;
+    newTime++;
+
+    project = project.copyWith(time: newTime);
+
+    final sendPort = IsolateNameServer.lookupPortByName('timeCounter');
+    sendPort?.send(project.toJson());
+
+    debugPrint('Current project:\t ${project.toJson()}');
+  });
+}
+
+Future<ProjectEntity?> _loadProject() async {
+  final prefs = await SharedPreferences.getInstance();
+
+  final jsonString = prefs.getString('timeCounterProject');
+
+  if (jsonString == null) {
+    return null;
+  } else {
+    final projectJson = json.decode(jsonString);
+    final project = ProjectEntity.fromJson(projectJson);
+
+    return project;
+  }
 }
