@@ -14,6 +14,7 @@ import 'package:worktenser/features/projects/domain/repository/projects_reposito
 import 'package:worktenser/features/projects/domain/usecases/add_project.dart';
 import 'package:worktenser/features/projects/domain/usecases/get_projects_total_time.dart';
 import 'package:worktenser/features/projects/domain/usecases/load_projects.dart';
+import 'package:worktenser/features/projects/presentation/bloc/project_details/project_details_bloc.dart';
 import 'package:worktenser/features/timeCounter/data/presentation/bloc/time_counter/time_counter_bloc.dart';
 import 'package:worktenser/features/timeCounter/data/repository/time_counter_repository_impl.dart';
 import 'package:worktenser/features/timeCounter/domain/repository/time_counter_repository.dart';
@@ -34,9 +35,9 @@ Future<void> initializeDependiencies() async {
 
   _registerAuthenticationDependencies();
 
-  _registerProjectsDependencies();
-
   _registerTimeCounterDependencies(sharedPrefs);
+
+  _registerProjectsDependencies();
 }
 
 void _registerAuthenticationDependencies() {
@@ -95,6 +96,9 @@ void _registerProjectsDependencies() {
         deleteProjectUseCase: sl(),
         getProjectsTotalTimeUseCase: sl(),
       ));
+
+  sl.registerFactory<ProjectDetailsBloc>(
+      () => ProjectDetailsBloc(timeCounterBloc: sl()));
 }
 
 void _registerTimeCounterDependencies(SharedPreferences preferences) {

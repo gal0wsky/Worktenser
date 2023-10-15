@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/config/colors.dart';
 import 'package:worktenser/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:worktenser/features/projects/presentation/bloc/project_details/project_details_bloc.dart';
 import 'package:worktenser/features/projects/presentation/bloc/projects/projects_bloc.dart';
 
 import 'add_project_page.dart';
@@ -128,11 +129,15 @@ class HomePage extends StatelessWidget {
                               ),
                             ),
                             onTap: () {
+                              context.read<ProjectDetailsBloc>().add(
+                                    LoadProjectDetails(
+                                      project: state.projects[index],
+                                    ),
+                                  );
+
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (_) => DetailsPage(
-                                    project: state.projects[index],
-                                  ),
+                                  builder: (_) => const DetailsPage(),
                                 ),
                               );
                             },
