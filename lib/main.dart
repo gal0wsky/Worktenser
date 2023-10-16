@@ -107,35 +107,13 @@ class _AppState extends State<App> with WidgetsBindingObserver {
   }
 }
 
-// class App extends StatelessWidget {
-//   const App({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MultiBlocProvider(
-//       providers: [
-//         BlocProvider<AuthBloc>(
-//           create: (context) => sl(),
-//         ),
-//         BlocProvider<ProjectsBloc>(
-//           create: (context) => sl(),
-//         ),
-//         BlocProvider<TimeCounterBloc>(
-//           create: (context) => sl(),
-//         )
-//       ],
-//       child: const AppView(),
-//     );
-//   }
-// }
-
 class AppView extends StatelessWidget {
   const AppView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _initializeAsyncDependencies(),
+        future: _initializeAsyncDependencies(context),
         builder: ((context, snapshot) {
           return MaterialApp(
             title: 'Worktenser',
@@ -148,6 +126,12 @@ class AppView extends StatelessWidget {
   }
 }
 
-Future<void> _initializeAsyncDependencies() async {
+Future<void> _initializeAsyncDependencies(BuildContext context) async {
   await initializeTimeCounterService(sl());
+
+  final backgroundServiceRunning = await FlutterBackgroundService().isRunning();
+
+  if (backgroundServiceRunning) {
+    // context.read<TimeCounterBloc>().add(StartTimeCounter());
+  }
 }

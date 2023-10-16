@@ -23,22 +23,34 @@ class ProjectDetailsBloc
       final updatedProject = state.project;
 
       if (updatedProject != null) {
-        add(UpdateProjectDetails(project: updatedProject));
+        final detailsState = this.state;
+
+        if (detailsState is ProjectDetailsLoaded) {
+          if (detailsState.project.id == state.project?.id) {
+            add(UpdateProjectDetails(project: updatedProject));
+          }
+        }
       }
     });
   }
 
   Future<void> _onLoadProjectDetails(
       LoadProjectDetails event, Emitter<ProjectDetailsState> emit) async {
-    emit(ProjectDetailsLoaded(project: event.project));
+    final state = _timeCounterBloc.state;
+
+    if (state is TimeCounterWorking) {
+      if (state.project!.id == event.project.id) {
+        emit(ProjectDetailsLoaded(project: state.project!));
+      } else {
+        emit(ProjectDetailsLoaded(project: event.project));
+      }
+    } else {
+      emit(ProjectDetailsLoaded(project: event.project));
+    }
   }
 
   Future<void> _onUpdateProjectDetails(
       UpdateProjectDetails event, Emitter<ProjectDetailsState> emit) async {
-    final state = this.state;
-
-    if (state is ProjectDetailsLoading) return;
-
     emit(ProjectDetailsLoaded(project: event.project));
   }
 

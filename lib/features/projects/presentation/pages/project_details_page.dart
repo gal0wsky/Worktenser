@@ -33,10 +33,9 @@ class DetailsPage extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          // if (state is ProjectDetailsLoading) {
-          //   return const CircularProgressIndicator();
-          // } else
-          if (state is ProjectDetailsError) {
+          if (state is ProjectDetailsLoading) {
+            return const CircularProgressIndicator();
+          } else if (state is ProjectDetailsError) {
             return Text(state.message);
           }
 

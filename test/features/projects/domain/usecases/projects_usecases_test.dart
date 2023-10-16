@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:worktenser/features/auth/domain/entities/user.dart';
+import 'package:worktenser/features/projects/data/data_sources/local/projects_local_storage.dart';
 import 'package:worktenser/features/projects/domain/entities/project.dart';
 import 'package:worktenser/features/projects/domain/repository/projects_repository.dart';
 import 'package:worktenser/features/projects/domain/usecases/add_project.dart';
@@ -12,9 +13,11 @@ import 'package:worktenser/features/projects/domain/usecases/update_project.dart
 
 import 'projects_usecases_test.mocks.dart';
 
-@GenerateNiceMocks([MockSpec<ProjectsRepository>()])
+@GenerateNiceMocks(
+    [MockSpec<ProjectsRepository>(), MockSpec<ProjectsLocalStorage>()])
 void main() {
   final repoMock = MockProjectsRepository();
+  final localStorageMock = MockProjectsLocalStorage();
 
   const fakeUser = UserEntity(
     id: 'veryFakeID',
@@ -43,7 +46,11 @@ void main() {
     when(repoMock.loadProjects(fakeUser))
         .thenAnswer((realInvocation) async => [fakeProj1, fakeProj2]);
 
-    final useCase = LoadProjectsUsecase(projectsRepository: repoMock);
+    when(localStorageMock.save([fakeProj1, fakeProj2]))
+        .thenAnswer((realInvocation) async => true);
+
+    final useCase = LoadProjectsUsecase(
+        projectsRepository: repoMock, projectsLocalStorage: localStorageMock);
 
     final projects = await useCase.call(params: fakeUser);
 
@@ -54,7 +61,25 @@ void main() {
     when(repoMock.loadProjects(fakeUser))
         .thenAnswer((realInvocation) async => []);
 
-    final useCase = LoadProjectsUsecase(projectsRepository: repoMock);
+    when(localStorageMock.save([])).thenAnswer((realInvocation) async => true);
+
+    final useCase = LoadProjectsUsecase(
+        projectsRepository: repoMock, projectsLocalStorage: localStorageMock);
+
+    final projects = await useCase.call(params: fakeUser);
+
+    expect(projects, []);
+  });
+
+  test('Load projects invalid local backup', () async {
+    when(repoMock.loadProjects(fakeUser))
+        .thenAnswer((realInvocation) async => [fakeProj1, fakeProj2]);
+
+    when(localStorageMock.save([fakeProj1, fakeProj2]))
+        .thenAnswer((realInvocation) async => false);
+
+    final useCase = LoadProjectsUsecase(
+        projectsRepository: repoMock, projectsLocalStorage: localStorageMock);
 
     final projects = await useCase.call(params: fakeUser);
 
@@ -65,7 +90,11 @@ void main() {
     when(repoMock.addProject(fakeProj1))
         .thenAnswer((realInvocation) async => true);
 
-    final useCase = AddProjectUseCase(projectsRepository: repoMock);
+    when(localStorageMock.add(fakeProj1))
+        .thenAnswer((realInvocation) async => true);
+
+    final useCase = AddProjectUseCase(
+        projectsRepository: repoMock, projectsLocalStorage: localStorageMock);
 
     final result = await useCase.call(params: fakeProj1);
 
@@ -76,7 +105,23 @@ void main() {
     when(repoMock.addProject(fakeProj1))
         .thenAnswer((realInvocation) async => false);
 
-    final useCase = AddProjectUseCase(projectsRepository: repoMock);
+    final useCase = AddProjectUseCase(
+        projectsRepository: repoMock, projectsLocalStorage: localStorageMock);
+
+    final result = await useCase.call(params: fakeProj1);
+
+    expect(result, false);
+  });
+
+  test('Add project invalid local backup', () async {
+    when(repoMock.addProject(fakeProj1))
+        .thenAnswer((realInvocation) async => true);
+
+    when(localStorageMock.add(fakeProj1))
+        .thenAnswer((realInvocation) async => false);
+
+    final useCase = AddProjectUseCase(
+        projectsRepository: repoMock, projectsLocalStorage: localStorageMock);
 
     final result = await useCase.call(params: fakeProj1);
 
@@ -87,7 +132,11 @@ void main() {
     when(repoMock.updateProject(fakeProj1))
         .thenAnswer((realInvocation) async => true);
 
-    final useCase = UpdateProjectUseCase(projectsRepository: repoMock);
+    when(localStorageMock.update(fakeProj1))
+        .thenAnswer((realInvocation) async => true);
+
+    final useCase = UpdateProjectUseCase(
+        projectsRepository: repoMock, projectsLocalStorage: localStorageMock);
 
     final result = await useCase.call(params: fakeProj1);
 
@@ -98,7 +147,23 @@ void main() {
     when(repoMock.updateProject(fakeProj1))
         .thenAnswer((realInvocation) async => false);
 
-    final useCase = UpdateProjectUseCase(projectsRepository: repoMock);
+    final useCase = UpdateProjectUseCase(
+        projectsRepository: repoMock, projectsLocalStorage: localStorageMock);
+
+    final result = await useCase.call(params: fakeProj1);
+
+    expect(result, false);
+  });
+
+  test('Update project invalid local update', () async {
+    when(repoMock.updateProject(fakeProj1))
+        .thenAnswer((realInvocation) async => true);
+
+    when(localStorageMock.update(fakeProj1))
+        .thenAnswer((realInvocation) async => false);
+
+    final useCase = UpdateProjectUseCase(
+        projectsRepository: repoMock, projectsLocalStorage: localStorageMock);
 
     final result = await useCase.call(params: fakeProj1);
 
@@ -109,7 +174,11 @@ void main() {
     when(repoMock.deleteProject(fakeProj1))
         .thenAnswer((realInvocation) async => true);
 
-    final useCase = DeleteProjectUseCase(projectsRepository: repoMock);
+    when(localStorageMock.delete(fakeProj1))
+        .thenAnswer((realInvocation) async => true);
+
+    final useCase = DeleteProjectUseCase(
+        projectsRepository: repoMock, projectsLocalStorage: localStorageMock);
 
     final result = await useCase.call(params: fakeProj1);
 
@@ -120,7 +189,23 @@ void main() {
     when(repoMock.deleteProject(fakeProj1))
         .thenAnswer((realInvocation) async => false);
 
-    final useCase = DeleteProjectUseCase(projectsRepository: repoMock);
+    final useCase = DeleteProjectUseCase(
+        projectsRepository: repoMock, projectsLocalStorage: localStorageMock);
+
+    final result = await useCase.call(params: fakeProj1);
+
+    expect(result, false);
+  });
+
+  test('Delete project invalid local delete', () async {
+    when(repoMock.deleteProject(fakeProj1))
+        .thenAnswer((realInvocation) async => true);
+
+    when(localStorageMock.delete(fakeProj1))
+        .thenAnswer((realInvocation) async => false);
+
+    final useCase = DeleteProjectUseCase(
+        projectsRepository: repoMock, projectsLocalStorage: localStorageMock);
 
     final result = await useCase.call(params: fakeProj1);
 

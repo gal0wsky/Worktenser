@@ -122,7 +122,7 @@ class HomePage extends StatelessWidget {
                           ),
                           child: ListTile(
                             title: Text(
-                              state.projects[index].name,
+                              '${state.projects[index].name}\t${state.projects[index].printTime()}',
                               style: const TextStyle(
                                 fontSize: 20,
                                 color: AppColors.textPrimary,

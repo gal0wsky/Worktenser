@@ -9,6 +9,8 @@ import 'package:worktenser/features/auth/domain/usecases/signin_with_credentials
 import 'package:worktenser/features/auth/domain/usecases/signin_with_google.dart';
 import 'package:worktenser/features/auth/domain/usecases/signup_with_credentials.dart';
 import 'package:worktenser/features/auth/presentation/bloc/login/login_bloc.dart';
+import 'package:worktenser/features/projects/data/data_sources/local/projects_local_storage.dart';
+import 'package:worktenser/features/projects/data/data_sources/local/projects_local_storage_impl.dart';
 import 'package:worktenser/features/projects/data/repository/projects_repository_impl.dart';
 import 'package:worktenser/features/projects/domain/repository/projects_repository.dart';
 import 'package:worktenser/features/projects/domain/usecases/add_project.dart';
@@ -37,7 +39,7 @@ Future<void> initializeDependiencies() async {
 
   _registerTimeCounterDependencies(sharedPrefs);
 
-  _registerProjectsDependencies();
+  _registerProjectsDependencies(sharedPrefs);
 }
 
 void _registerAuthenticationDependencies() {
@@ -54,7 +56,8 @@ void _registerAuthenticationDependencies() {
   sl.registerSingleton<SigninWithGoogleUseCase>(
       SigninWithGoogleUseCase(authRepository: sl()));
 
-  sl.registerSingleton<LogoutUseCase>(LogoutUseCase(authRepository: sl()));
+  sl.registerSingleton<LogoutUseCase>(
+      LogoutUseCase(authRepository: sl(), projectsLocalStorage: sl()));
 
   // Blocs
   sl.registerFactory<AuthBloc>(() => AuthBloc(
@@ -69,22 +72,25 @@ void _registerAuthenticationDependencies() {
       signinWithCredentialsUseCase: sl(), signinWithGoogleUseCase: sl()));
 }
 
-void _registerProjectsDependencies() {
+void _registerProjectsDependencies(SharedPreferences preferences) {
   // Dependencies
   sl.registerSingleton<ProjectsRepository>(ProjectsRepositoryImpl());
 
+  sl.registerSingleton<ProjectsLocalStorage>(
+      ProjectsLocalStorageImpl(preferences: preferences));
+
   // Usecases
-  sl.registerSingleton<LoadProjectsUsecase>(
-      LoadProjectsUsecase(projectsRepository: sl()));
+  sl.registerSingleton<LoadProjectsUsecase>(LoadProjectsUsecase(
+      projectsRepository: sl(), projectsLocalStorage: sl()));
 
   sl.registerSingleton<AddProjectUseCase>(
-      AddProjectUseCase(projectsRepository: sl()));
+      AddProjectUseCase(projectsRepository: sl(), projectsLocalStorage: sl()));
 
-  sl.registerSingleton<UpdateProjectUseCase>(
-      UpdateProjectUseCase(projectsRepository: sl()));
+  sl.registerSingleton<UpdateProjectUseCase>(UpdateProjectUseCase(
+      projectsRepository: sl(), projectsLocalStorage: sl()));
 
-  sl.registerSingleton<DeleteProjectUseCase>(
-      DeleteProjectUseCase(projectsRepository: sl()));
+  sl.registerSingleton<DeleteProjectUseCase>(DeleteProjectUseCase(
+      projectsRepository: sl(), projectsLocalStorage: sl()));
 
   sl.registerSingleton<GetProjectsTotalTimeUseCase>(
       GetProjectsTotalTimeUseCase(projectsRepository: sl()));

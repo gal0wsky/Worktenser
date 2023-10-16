@@ -94,11 +94,7 @@ class TimeCounterBloc extends Bloc<TimeCounterEvent, TimeCounterState> {
   void _onUpdateTimeCounterProject(
       UpdateTimeCounterProject event, Emitter<TimeCounterState> emit) {
     if (event.project.userId.isNotEmpty) {
-      final state = this.state;
-
-      if (state is TimeCounterWorking) {
-        emit(TimeCounterWorking(project: event.project));
-      }
+      emit(TimeCounterWorking(project: event.project));
     }
   }
 }

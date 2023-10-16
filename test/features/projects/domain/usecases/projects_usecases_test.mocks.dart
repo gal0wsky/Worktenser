@@ -7,6 +7,8 @@ import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:worktenser/features/auth/domain/entities/user.dart' as _i5;
+import 'package:worktenser/features/projects/data/data_sources/local/projects_local_storage.dart'
+    as _i6;
 import 'package:worktenser/features/projects/domain/entities/project.dart'
     as _i4;
 import 'package:worktenser/features/projects/domain/repository/projects_repository.dart'
@@ -80,4 +82,66 @@ class MockProjectsRepository extends _i1.Mock
         returnValue: 0,
         returnValueForMissingStub: 0,
       ) as int);
+}
+
+/// A class which mocks [ProjectsLocalStorage].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockProjectsLocalStorage extends _i1.Mock
+    implements _i6.ProjectsLocalStorage {
+  @override
+  List<_i4.ProjectEntity> load() => (super.noSuchMethod(
+        Invocation.method(
+          #load,
+          [],
+        ),
+        returnValue: <_i4.ProjectEntity>[],
+        returnValueForMissingStub: <_i4.ProjectEntity>[],
+      ) as List<_i4.ProjectEntity>);
+  @override
+  _i3.Future<bool> add(_i4.ProjectEntity? project) => (super.noSuchMethod(
+        Invocation.method(
+          #add,
+          [project],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+        returnValueForMissingStub: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+  @override
+  _i3.Future<bool> save(List<_i4.ProjectEntity>? projects) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #save,
+          [projects],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+        returnValueForMissingStub: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+  @override
+  _i3.Future<bool> update(_i4.ProjectEntity? project) => (super.noSuchMethod(
+        Invocation.method(
+          #update,
+          [project],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+        returnValueForMissingStub: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+  @override
+  _i3.Future<bool> delete(_i4.ProjectEntity? project) => (super.noSuchMethod(
+        Invocation.method(
+          #delete,
+          [project],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+        returnValueForMissingStub: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+  @override
+  _i3.Future<bool> clear() => (super.noSuchMethod(
+        Invocation.method(
+          #clear,
+          [],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+        returnValueForMissingStub: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
 }
