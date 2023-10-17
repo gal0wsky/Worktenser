@@ -17,10 +17,10 @@ import 'package:worktenser/features/projects/domain/usecases/add_project.dart';
 import 'package:worktenser/features/projects/domain/usecases/get_projects_total_time.dart';
 import 'package:worktenser/features/projects/domain/usecases/load_projects.dart';
 import 'package:worktenser/features/projects/presentation/bloc/project_details/project_details_bloc.dart';
-import 'package:worktenser/features/timeCounter/data/presentation/bloc/time_counter/time_counter_bloc.dart';
 import 'package:worktenser/features/timeCounter/data/repository/time_counter_repository_impl.dart';
 import 'package:worktenser/features/timeCounter/domain/repository/time_counter_repository.dart';
 import 'package:worktenser/features/timeCounter/domain/usecases/start_counter.dart';
+import 'package:worktenser/features/timeCounter/presentation/bloc/time_counter/time_counter_bloc.dart';
 
 import 'features/auth/domain/repository/auth_repository.dart';
 import 'features/auth/presentation/bloc/auth/auth_bloc.dart';
@@ -34,6 +34,9 @@ final sl = GetIt.instance;
 
 Future<void> initializeDependiencies() async {
   final sharedPrefs = await SharedPreferences.getInstance();
+
+  sl.registerSingleton<ProjectsLocalStorage>(
+      ProjectsLocalStorageImpl(preferences: sharedPrefs));
 
   _registerAuthenticationDependencies();
 
@@ -75,9 +78,6 @@ void _registerAuthenticationDependencies() {
 void _registerProjectsDependencies(SharedPreferences preferences) {
   // Dependencies
   sl.registerSingleton<ProjectsRepository>(ProjectsRepositoryImpl());
-
-  sl.registerSingleton<ProjectsLocalStorage>(
-      ProjectsLocalStorageImpl(preferences: preferences));
 
   // Usecases
   sl.registerSingleton<LoadProjectsUsecase>(LoadProjectsUsecase(

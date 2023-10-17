@@ -11,7 +11,7 @@ import 'package:flutter_background_service_ios/flutter_background_service_ios.da
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worktenser/features/projects/data/models/project.dart';
 import 'package:worktenser/features/projects/domain/entities/project.dart';
-import 'package:worktenser/features/timeCounter/data/presentation/bloc/time_counter/time_counter_bloc.dart';
+import 'package:worktenser/features/timeCounter/presentation/bloc/time_counter/time_counter_bloc.dart';
 
 const _notificationsChannelName = 'dev.gawlowski.worktenser/notifications';
 const _notificationsChannel = MethodChannel(_notificationsChannelName);

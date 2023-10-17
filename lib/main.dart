@@ -9,7 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/bloc_observer.dart';
 import 'package:worktenser/config/routes.dart';
 import 'package:worktenser/features/projects/presentation/bloc/project_details/project_details_bloc.dart';
-import 'package:worktenser/features/timeCounter/data/presentation/bloc/time_counter/time_counter_bloc.dart';
+import 'package:worktenser/features/timeCounter/presentation/bloc/time_counter/time_counter_bloc.dart';
 import 'package:worktenser/injection_container.dart';
 
 import 'features/auth/presentation/bloc/auth/auth_bloc.dart';
