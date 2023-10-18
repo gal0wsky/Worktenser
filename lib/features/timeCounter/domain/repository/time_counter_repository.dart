@@ -1,5 +1,5 @@
 abstract class TimeCounterRepository {
-  Future<void> initialize();
-  Future<void> start();
+  Future<bool> start();
   Future<void> stop();
+  Future<bool> get isWorking;
 }

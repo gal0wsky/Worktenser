@@ -131,10 +131,10 @@ void _registerTimeCounterDependencies(SharedPreferences preferences) {
 
   // Usecases
   sl.registerSingleton<StartProjectTimeCounterUseCase>(
-      StartProjectTimeCounterUseCase());
+      StartProjectTimeCounterUseCase(counterRepository: sl()));
 
   sl.registerSingleton<StopProjectTimeCounterUseCase>(
-      StopProjectTimeCounterUseCase());
+      StopProjectTimeCounterUseCase(counterRepository: sl()));
 
   sl.registerSingleton<UpdateInFirestoreUseCase>(
       UpdateInFirestoreUseCase(projectsRepository: sl()));
@@ -147,7 +147,10 @@ void _registerTimeCounterDependencies(SharedPreferences preferences) {
 
   // Bloc
   sl.registerSingleton<TimeCounterBloc>(TimeCounterBloc(
+    receivePort: sl(),
     preferences: preferences,
+    startUseCase: sl(),
+    stopUseCase: sl(),
     updateLocalCopyUseCase: sl(),
     updateInFirestoreUseCase: sl(),
     saveProjectOnDeviceUseCase: sl(),

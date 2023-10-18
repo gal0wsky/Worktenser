@@ -1,18 +1,17 @@
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:worktenser/features/timeCounter/domain/repository/time_counter_repository.dart';
 
 class TimeCounterRepositoryImpl implements TimeCounterRepository {
   @override
-  Future<void> initialize() {
-    // TODO: implement initialize
-    throw UnimplementedError();
+  Future<bool> start() async {
+    return FlutterBackgroundService().startService();
   }
 
   @override
-  Future<void> start() async {}
+  Future<void> stop() async {
+    FlutterBackgroundService().invoke('stopTimeCounter');
+  }
 
   @override
-  Future<void> stop() {
-    // TODO: implement stop
-    throw UnimplementedError();
-  }
+  Future<bool> get isWorking => FlutterBackgroundService().isRunning();
 }

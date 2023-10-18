@@ -3,29 +3,37 @@ import 'dart:isolate';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worktenser/features/projects/domain/entities/project.dart';
 import 'package:worktenser/features/timeCounter/domain/usecases/save_project_on_device.dart';
+import 'package:worktenser/features/timeCounter/domain/usecases/start_counter.dart';
+import 'package:worktenser/features/timeCounter/domain/usecases/stop_counter.dart';
 import 'package:worktenser/features/timeCounter/domain/usecases/update_in_firestore.dart';
 import 'package:worktenser/features/timeCounter/domain/usecases/update_local_copy.dart';
-import 'package:worktenser/injection_container.dart';
 
 part 'time_counter_event.dart';
 part 'time_counter_state.dart';
 
 class TimeCounterBloc extends Bloc<TimeCounterEvent, TimeCounterState> {
-  final ReceivePort _receivePort = sl();
+  final ReceivePort _receivePort;
+  final StartProjectTimeCounterUseCase _startUseCase;
+  final StopProjectTimeCounterUseCase _stopUseCase;
   final UpdateLocalCopyUseCase _updateLocalCopyUseCase;
   final UpdateInFirestoreUseCase _updateInFirestoreUseCase;
   final SaveProjectOnDeviceUseCase _saveProjectOnDeviceUseCase;
 
   TimeCounterBloc({
+    required ReceivePort receivePort,
     required SharedPreferences preferences,
+    required StartProjectTimeCounterUseCase startUseCase,
+    required StopProjectTimeCounterUseCase stopUseCase,
     required UpdateLocalCopyUseCase updateLocalCopyUseCase,
     required UpdateInFirestoreUseCase updateInFirestoreUseCase,
     required SaveProjectOnDeviceUseCase saveProjectOnDeviceUseCase,
-  })  : _updateLocalCopyUseCase = updateLocalCopyUseCase,
+  })  : _receivePort = receivePort,
+        _startUseCase = startUseCase,
+        _stopUseCase = stopUseCase,
+        _updateLocalCopyUseCase = updateLocalCopyUseCase,
         _updateInFirestoreUseCase = updateInFirestoreUseCase,
         _saveProjectOnDeviceUseCase = saveProjectOnDeviceUseCase,
         super(TimeCounterInitial()) {
@@ -46,10 +54,10 @@ class TimeCounterBloc extends Bloc<TimeCounterEvent, TimeCounterState> {
     final projectSaved =
         await _saveProjectOnDeviceUseCase.call(params: event.project);
 
-    if (projectSaved) {
-      emit(TimeCounterInitialized(project: event.project));
-    } else {
+    if (!projectSaved) {
       emit(const TimeCounterError(message: "Couldn't set the project"));
+    } else {
+      emit(TimeCounterInitialized(project: event.project));
     }
   }
 
@@ -60,9 +68,13 @@ class TimeCounterBloc extends Bloc<TimeCounterEvent, TimeCounterState> {
     if (state is TimeCounterWorking) return;
 
     if (state is TimeCounterInitialized) {
-      await FlutterBackgroundService().startService();
+      final counterStarted = await _startUseCase.call();
 
-      emit(TimeCounterWorking(project: state.project!));
+      if (!counterStarted) {
+        emit(const TimeCounterError(message: "Couldn't start the counter."));
+      } else {
+        emit(TimeCounterWorking(project: state.project!));
+      }
     }
 
     if (state is TimeCounterStopped) {
@@ -70,9 +82,13 @@ class TimeCounterBloc extends Bloc<TimeCounterEvent, TimeCounterState> {
           await _saveProjectOnDeviceUseCase.call(params: state.project!);
 
       if (projectSaved) {
-        await FlutterBackgroundService().startService();
+        final counterStarted = await _startUseCase.call();
 
-        emit(TimeCounterWorking(project: state.project!));
+        if (!counterStarted) {
+          emit(const TimeCounterError(message: "Couldn't start the counter."));
+        } else {
+          emit(TimeCounterWorking(project: state.project!));
+        }
       } else {
         emit(const TimeCounterError());
       }
@@ -86,20 +102,22 @@ class TimeCounterBloc extends Bloc<TimeCounterEvent, TimeCounterState> {
     if (state is TimeCounterStopped || state is TimeCounterInitialized) return;
 
     if (state is TimeCounterWorking) {
-      FlutterBackgroundService().invoke('stopTimeCounter');
+      final counterStopped = await _stopUseCase.call();
 
-      final projectSaved =
-          await _saveProjectOnDeviceUseCase.call(params: state.project!);
-
-      if (!projectSaved) {
-        emit(const TimeCounterError(message: "Couldn't save the project"));
+      if (!counterStopped) {
+        emit(const TimeCounterError(message: "Couldn't stop the counter"));
       } else {
-        emit(TimeCounterStopped(project: state.project!));
-        _updateInFirestoreUseCase.call(params: state.project!);
+        final projectSaved =
+            await _saveProjectOnDeviceUseCase.call(params: state.project!);
+
+        if (!projectSaved) {
+          emit(const TimeCounterError(message: "Couldn't save the project"));
+        } else {
+          emit(TimeCounterStopped(project: state.project!));
+          _updateInFirestoreUseCase.call(params: state.project!);
+        }
       }
     }
-
-    // update in Firestore
   }
 
   Future<void> _onUpdateTimeCounterProject(
