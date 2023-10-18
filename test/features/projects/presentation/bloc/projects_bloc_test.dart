@@ -7,9 +7,11 @@ import 'package:worktenser/features/projects/domain/entities/project.dart';
 import 'package:worktenser/features/projects/domain/usecases/add_project.dart';
 import 'package:worktenser/features/projects/domain/usecases/delete_project.dart';
 import 'package:worktenser/features/projects/domain/usecases/get_projects_total_time.dart';
+import 'package:worktenser/features/projects/domain/usecases/load_local_copy.dart';
 import 'package:worktenser/features/projects/domain/usecases/load_projects.dart';
 import 'package:worktenser/features/projects/domain/usecases/update_project.dart';
 import 'package:worktenser/features/projects/presentation/bloc/projects/projects_bloc.dart';
+import 'package:worktenser/features/timeCounter/presentation/bloc/time_counter/time_counter_bloc.dart';
 
 import 'projects_bloc_test.mocks.dart';
 
@@ -19,6 +21,8 @@ import 'projects_bloc_test.mocks.dart';
   MockSpec<UpdateProjectUseCase>(),
   MockSpec<DeleteProjectUseCase>(),
   MockSpec<GetProjectsTotalTimeUseCase>(),
+  MockSpec<LoadLocalCopyUseCase>(),
+  MockSpec<TimeCounterBloc>(),
 ])
 void main() {
   final loadUseCaseMock = MockLoadProjectsUsecase();
@@ -26,6 +30,8 @@ void main() {
   final updateUseCaseMock = MockUpdateProjectUseCase();
   final deleteUseCaseMock = MockDeleteProjectUseCase();
   final getTotalTimeUseCaseMock = MockGetProjectsTotalTimeUseCase();
+  final loadLocalCopyUseCaseMock = MockLoadLocalCopyUseCase();
+  final timeCounterMock = MockTimeCounterBloc();
 
   late ProjectsBloc bloc;
 
@@ -53,19 +59,25 @@ void main() {
   );
 
   setUp(() => bloc = ProjectsBloc(
-      loadProjectsUsecase: loadUseCaseMock,
-      addProjectUseCase: addUseCaseMock,
-      updateProjectUseCase: updateUseCaseMock,
-      deleteProjectUseCase: deleteUseCaseMock,
-      getProjectsTotalTimeUseCase: getTotalTimeUseCaseMock));
-
-  test('Create bloc', () {
-    final projectsBloc = ProjectsBloc(
         loadProjectsUsecase: loadUseCaseMock,
         addProjectUseCase: addUseCaseMock,
         updateProjectUseCase: updateUseCaseMock,
         deleteProjectUseCase: deleteUseCaseMock,
-        getProjectsTotalTimeUseCase: getTotalTimeUseCaseMock);
+        getProjectsTotalTimeUseCase: getTotalTimeUseCaseMock,
+        loadLocalCopyUseCase: loadLocalCopyUseCaseMock,
+        timeCounterBloc: timeCounterMock,
+      ));
+
+  test('Create bloc', () {
+    final projectsBloc = ProjectsBloc(
+      loadProjectsUsecase: loadUseCaseMock,
+      addProjectUseCase: addUseCaseMock,
+      updateProjectUseCase: updateUseCaseMock,
+      deleteProjectUseCase: deleteUseCaseMock,
+      getProjectsTotalTimeUseCase: getTotalTimeUseCaseMock,
+      loadLocalCopyUseCase: loadLocalCopyUseCaseMock,
+      timeCounterBloc: timeCounterMock,
+    );
 
     expect(projectsBloc.state, ProjectsInitial());
   });

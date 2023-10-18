@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:bloc/bloc.dart';
@@ -7,17 +6,28 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worktenser/features/projects/domain/entities/project.dart';
+import 'package:worktenser/features/timeCounter/domain/usecases/save_project_on_device.dart';
+import 'package:worktenser/features/timeCounter/domain/usecases/update_in_firestore.dart';
+import 'package:worktenser/features/timeCounter/domain/usecases/update_local_copy.dart';
 import 'package:worktenser/injection_container.dart';
 
 part 'time_counter_event.dart';
 part 'time_counter_state.dart';
 
 class TimeCounterBloc extends Bloc<TimeCounterEvent, TimeCounterState> {
-  final SharedPreferences _prefs;
   final ReceivePort _receivePort = sl();
+  final UpdateLocalCopyUseCase _updateLocalCopyUseCase;
+  final UpdateInFirestoreUseCase _updateInFirestoreUseCase;
+  final SaveProjectOnDeviceUseCase _saveProjectOnDeviceUseCase;
 
-  TimeCounterBloc({required SharedPreferences preferences})
-      : _prefs = preferences,
+  TimeCounterBloc({
+    required SharedPreferences preferences,
+    required UpdateLocalCopyUseCase updateLocalCopyUseCase,
+    required UpdateInFirestoreUseCase updateInFirestoreUseCase,
+    required SaveProjectOnDeviceUseCase saveProjectOnDeviceUseCase,
+  })  : _updateLocalCopyUseCase = updateLocalCopyUseCase,
+        _updateInFirestoreUseCase = updateInFirestoreUseCase,
+        _saveProjectOnDeviceUseCase = saveProjectOnDeviceUseCase,
         super(TimeCounterInitial()) {
     on<InitializeTimeCounter>(_onInitializeTimeCounter);
     on<StartTimeCounter>(_onStartTimeCounter);
@@ -33,8 +43,8 @@ class TimeCounterBloc extends Bloc<TimeCounterEvent, TimeCounterState> {
 
   void _onInitializeTimeCounter(
       InitializeTimeCounter event, Emitter<TimeCounterState> emit) async {
-    final projectSaved = await _prefs.setString(
-        'timeCounterProject', json.encode(event.project.toJson()));
+    final projectSaved =
+        await _saveProjectOnDeviceUseCase.call(params: event.project);
 
     if (projectSaved) {
       emit(TimeCounterInitialized(project: event.project));
@@ -56,8 +66,8 @@ class TimeCounterBloc extends Bloc<TimeCounterEvent, TimeCounterState> {
     }
 
     if (state is TimeCounterStopped) {
-      final projectSaved = await _prefs.setString(
-          'timeCounterProject', json.encode(state.project!.toJson()));
+      final projectSaved =
+          await _saveProjectOnDeviceUseCase.call(params: state.project!);
 
       if (projectSaved) {
         await FlutterBackgroundService().startService();
@@ -78,23 +88,31 @@ class TimeCounterBloc extends Bloc<TimeCounterEvent, TimeCounterState> {
     if (state is TimeCounterWorking) {
       FlutterBackgroundService().invoke('stopTimeCounter');
 
-      final projectSaved = await _prefs.setString(
-          'timeCounterProject', json.encode(state.project!.toJson()));
+      final projectSaved =
+          await _saveProjectOnDeviceUseCase.call(params: state.project!);
 
-      if (projectSaved) {
-        emit(TimeCounterStopped(project: state.project!));
-      } else {
+      if (!projectSaved) {
         emit(const TimeCounterError(message: "Couldn't save the project"));
+      } else {
+        emit(TimeCounterStopped(project: state.project!));
+        _updateInFirestoreUseCase.call(params: state.project!);
       }
     }
 
     // update in Firestore
   }
 
-  void _onUpdateTimeCounterProject(
-      UpdateTimeCounterProject event, Emitter<TimeCounterState> emit) {
+  Future<void> _onUpdateTimeCounterProject(
+      UpdateTimeCounterProject event, Emitter<TimeCounterState> emit) async {
     if (event.project.userId.isNotEmpty) {
-      emit(TimeCounterWorking(project: event.project));
+      final updatedLocally =
+          await _updateLocalCopyUseCase.call(params: event.project);
+
+      if (!updatedLocally) {
+        emit(const TimeCounterError());
+      } else {
+        emit(TimeCounterWorking(project: event.project));
+      }
     }
   }
 }

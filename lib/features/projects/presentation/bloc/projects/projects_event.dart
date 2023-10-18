@@ -44,3 +44,5 @@ final class DeleteProject extends ProjectsEvent {
 }
 
 final class ReloadProjects extends ProjectsEvent {}
+
+final class LoadLocalCopy extends ProjectsEvent {}

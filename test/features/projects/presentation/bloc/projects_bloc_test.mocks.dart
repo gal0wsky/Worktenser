@@ -5,7 +5,9 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
+import 'package:bloc/bloc.dart' as _i13;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i12;
 import 'package:worktenser/features/auth/domain/entities/user.dart' as _i5;
 import 'package:worktenser/features/projects/domain/entities/project.dart'
     as _i4;
@@ -15,10 +17,14 @@ import 'package:worktenser/features/projects/domain/usecases/delete_project.dart
     as _i8;
 import 'package:worktenser/features/projects/domain/usecases/get_projects_total_time.dart'
     as _i9;
+import 'package:worktenser/features/projects/domain/usecases/load_local_copy.dart'
+    as _i10;
 import 'package:worktenser/features/projects/domain/usecases/load_projects.dart'
     as _i2;
 import 'package:worktenser/features/projects/domain/usecases/update_project.dart'
     as _i7;
+import 'package:worktenser/features/timeCounter/presentation/bloc/time_counter/time_counter_bloc.dart'
+    as _i11;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -117,4 +123,150 @@ class MockGetProjectsTotalTimeUseCase extends _i1.Mock
         returnValue: _i3.Future<int>.value(0),
         returnValueForMissingStub: _i3.Future<int>.value(0),
       ) as _i3.Future<int>);
+}
+
+/// A class which mocks [LoadLocalCopyUseCase].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockLoadLocalCopyUseCase extends _i1.Mock
+    implements _i10.LoadLocalCopyUseCase {
+  @override
+  _i3.Future<List<_i4.ProjectEntity>> call({dynamic params}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #call,
+          [],
+          {#params: params},
+        ),
+        returnValue:
+            _i3.Future<List<_i4.ProjectEntity>>.value(<_i4.ProjectEntity>[]),
+        returnValueForMissingStub:
+            _i3.Future<List<_i4.ProjectEntity>>.value(<_i4.ProjectEntity>[]),
+      ) as _i3.Future<List<_i4.ProjectEntity>>);
+}
+
+/// A class which mocks [TimeCounterBloc].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTimeCounterBloc extends _i1.Mock implements _i11.TimeCounterBloc {
+  @override
+  _i11.TimeCounterState get state => (super.noSuchMethod(
+        Invocation.getter(#state),
+        returnValue: _i12.dummyValue<_i11.TimeCounterState>(
+          this,
+          Invocation.getter(#state),
+        ),
+        returnValueForMissingStub: _i12.dummyValue<_i11.TimeCounterState>(
+          this,
+          Invocation.getter(#state),
+        ),
+      ) as _i11.TimeCounterState);
+  @override
+  _i3.Stream<_i11.TimeCounterState> get stream => (super.noSuchMethod(
+        Invocation.getter(#stream),
+        returnValue: _i3.Stream<_i11.TimeCounterState>.empty(),
+        returnValueForMissingStub: _i3.Stream<_i11.TimeCounterState>.empty(),
+      ) as _i3.Stream<_i11.TimeCounterState>);
+  @override
+  bool get isClosed => (super.noSuchMethod(
+        Invocation.getter(#isClosed),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+  @override
+  void add(_i11.TimeCounterEvent? event) => super.noSuchMethod(
+        Invocation.method(
+          #add,
+          [event],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void onEvent(_i11.TimeCounterEvent? event) => super.noSuchMethod(
+        Invocation.method(
+          #onEvent,
+          [event],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void emit(_i11.TimeCounterState? state) => super.noSuchMethod(
+        Invocation.method(
+          #emit,
+          [state],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void on<E extends _i11.TimeCounterEvent>(
+    _i13.EventHandler<E, _i11.TimeCounterState>? handler, {
+    _i13.EventTransformer<E>? transformer,
+  }) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #on,
+          [handler],
+          {#transformer: transformer},
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void onTransition(
+          _i13.Transition<_i11.TimeCounterEvent, _i11.TimeCounterState>?
+              transition) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #onTransition,
+          [transition],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  _i3.Future<void> close() => (super.noSuchMethod(
+        Invocation.method(
+          #close,
+          [],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+  @override
+  void onChange(_i13.Change<_i11.TimeCounterState>? change) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #onChange,
+          [change],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void addError(
+    Object? error, [
+    StackTrace? stackTrace,
+  ]) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #addError,
+          [
+            error,
+            stackTrace,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void onError(
+    Object? error,
+    StackTrace? stackTrace,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #onError,
+          [
+            error,
+            stackTrace,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 }

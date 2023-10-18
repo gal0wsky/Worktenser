@@ -15,11 +15,15 @@ import 'package:worktenser/features/projects/data/repository/projects_repository
 import 'package:worktenser/features/projects/domain/repository/projects_repository.dart';
 import 'package:worktenser/features/projects/domain/usecases/add_project.dart';
 import 'package:worktenser/features/projects/domain/usecases/get_projects_total_time.dart';
+import 'package:worktenser/features/projects/domain/usecases/load_local_copy.dart';
 import 'package:worktenser/features/projects/domain/usecases/load_projects.dart';
 import 'package:worktenser/features/projects/presentation/bloc/project_details/project_details_bloc.dart';
 import 'package:worktenser/features/timeCounter/data/repository/time_counter_repository_impl.dart';
 import 'package:worktenser/features/timeCounter/domain/repository/time_counter_repository.dart';
+import 'package:worktenser/features/timeCounter/domain/usecases/save_project_on_device.dart';
 import 'package:worktenser/features/timeCounter/domain/usecases/start_counter.dart';
+import 'package:worktenser/features/timeCounter/domain/usecases/update_in_firestore.dart';
+import 'package:worktenser/features/timeCounter/domain/usecases/update_local_copy.dart';
 import 'package:worktenser/features/timeCounter/presentation/bloc/time_counter/time_counter_bloc.dart';
 
 import 'features/auth/domain/repository/auth_repository.dart';
@@ -37,6 +41,8 @@ Future<void> initializeDependiencies() async {
 
   sl.registerSingleton<ProjectsLocalStorage>(
       ProjectsLocalStorageImpl(preferences: sharedPrefs));
+
+  sl.registerSingleton<ProjectsRepository>(ProjectsRepositoryImpl());
 
   _registerAuthenticationDependencies();
 
@@ -77,7 +83,6 @@ void _registerAuthenticationDependencies() {
 
 void _registerProjectsDependencies(SharedPreferences preferences) {
   // Dependencies
-  sl.registerSingleton<ProjectsRepository>(ProjectsRepositoryImpl());
 
   // Usecases
   sl.registerSingleton<LoadProjectsUsecase>(LoadProjectsUsecase(
@@ -95,12 +100,17 @@ void _registerProjectsDependencies(SharedPreferences preferences) {
   sl.registerSingleton<GetProjectsTotalTimeUseCase>(
       GetProjectsTotalTimeUseCase(projectsRepository: sl()));
 
+  sl.registerSingleton<LoadLocalCopyUseCase>(
+      LoadLocalCopyUseCase(projectsLocalStorage: sl()));
+
   sl.registerFactory<ProjectsBloc>(() => ProjectsBloc(
         loadProjectsUsecase: sl(),
         addProjectUseCase: sl(),
         updateProjectUseCase: sl(),
         deleteProjectUseCase: sl(),
         getProjectsTotalTimeUseCase: sl(),
+        loadLocalCopyUseCase: sl(),
+        timeCounterBloc: sl(),
       ));
 
   sl.registerFactory<ProjectDetailsBloc>(
@@ -126,7 +136,20 @@ void _registerTimeCounterDependencies(SharedPreferences preferences) {
   sl.registerSingleton<StopProjectTimeCounterUseCase>(
       StopProjectTimeCounterUseCase());
 
+  sl.registerSingleton<UpdateInFirestoreUseCase>(
+      UpdateInFirestoreUseCase(projectsRepository: sl()));
+
+  sl.registerSingleton<UpdateLocalCopyUseCase>(
+      UpdateLocalCopyUseCase(projectsLocalStorage: sl()));
+
+  sl.registerSingleton<SaveProjectOnDeviceUseCase>(
+      SaveProjectOnDeviceUseCase(preferences: preferences));
+
   // Bloc
-  sl.registerSingleton<TimeCounterBloc>(
-      TimeCounterBloc(preferences: preferences));
+  sl.registerSingleton<TimeCounterBloc>(TimeCounterBloc(
+    preferences: preferences,
+    updateLocalCopyUseCase: sl(),
+    updateInFirestoreUseCase: sl(),
+    saveProjectOnDeviceUseCase: sl(),
+  ));
 }
