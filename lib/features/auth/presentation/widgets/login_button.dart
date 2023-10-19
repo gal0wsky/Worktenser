@@ -22,8 +22,16 @@ class LoginButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    fixedSize: const Size(200, 40),
-                    backgroundColor: AppColors.callToAction),
+                  fixedSize: const Size(300, 50),
+                  backgroundColor: AppColors.callToAction,
+                  textStyle: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
                 onPressed: () {
                   final loginData = LoginEntity(
                       email: emailController.value.text,
@@ -33,7 +41,9 @@ class LoginButton extends StatelessWidget {
                       .read<LoginBloc>()
                       .add(CredentialsLoginRequested(loginData: loginData));
                 },
-                child: const Text('LOGIN'),
+                child: const Text(
+                  'Sign in',
+                ),
               );
       },
     );

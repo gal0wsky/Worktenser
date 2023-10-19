@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/config/colors.dart';
 import 'package:worktenser/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:worktenser/features/auth/presentation/widgets/email_input.dart';
+import 'package:worktenser/features/auth/presentation/widgets/forgot_password_button.dart';
 import 'package:worktenser/features/auth/presentation/widgets/google_signin_button.dart';
 import 'package:worktenser/features/auth/presentation/widgets/login_button.dart';
 import 'package:worktenser/features/auth/presentation/widgets/password_input.dart';
-import 'package:worktenser/features/auth/presentation/widgets/go_to_signup_button.dart';
 import 'package:worktenser/injection_container.dart';
 
 class LoginPage extends StatelessWidget {
@@ -17,6 +17,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.primary,
       body: BlocProvider<LoginBloc>(
         create: (context) => sl(),
@@ -53,42 +54,82 @@ class LoginForm extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
-                  'Worktenser',
-                  style: TextStyle(
-                    fontSize: 40,
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Worktenser',
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 120,
+                      ),
+                      EmailInput(
+                        valueController: emailController,
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      PasswordInput(valueController: passwordController),
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      LoginButton(
+                        emailController: emailController,
+                        passwordController: passwordController,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      const GoogleSignInButton(),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(
-                  height: 120,
+                const Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ForgotPasswordButton(),
                 ),
-                EmailInput(
-                  valueController: emailController,
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                PasswordInput(valueController: passwordController),
-                const SizedBox(
-                  height: 50,
-                ),
-                LoginButton(
-                  emailController: emailController,
-                  passwordController: passwordController,
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                const GoogleSignInButton(),
-                const SizedBox(
-                  height: 8,
-                ),
-                const GoToSignupButton(),
-                const SizedBox(
-                  height: 8,
-                ),
+                // const Text(
+                //   'Worktenser',
+                //   style: TextStyle(
+                //     fontSize: 40,
+                //     color: AppColors.textPrimary,
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
+                // const SizedBox(
+                //   height: 120,
+                // ),
+                // EmailInput(
+                //   valueController: emailController,
+                // ),
+                // const SizedBox(
+                //   height: 16,
+                // ),
+                // PasswordInput(valueController: passwordController),
+                // const SizedBox(
+                //   height: 50,
+                // ),
+                // LoginButton(
+                //   emailController: emailController,
+                //   passwordController: passwordController,
+                // ),
+                // const SizedBox(
+                //   height: 20,
+                // ),
+                // const GoogleSignInButton(),
+                // const SizedBox(
+                //   height: 8,
+                // ),
+                // const ForgotPasswordButton(),
               ],
             ),
           );

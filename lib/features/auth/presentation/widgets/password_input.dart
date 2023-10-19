@@ -22,12 +22,17 @@ class PasswordInput extends StatelessWidget {
             color: AppColors.textPrimary,
           ),
           decoration: const InputDecoration(
-            labelText: 'password',
+            labelText: 'Password',
             labelStyle: TextStyle(
               color: AppColors.textPrimary,
             ),
-            filled: true,
-            fillColor: AppColors.secondary,
+            filled: false,
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: AppColors.secondary,
+                width: 3,
+              ),
+            ),
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(
                 color: AppColors.callToAction,
