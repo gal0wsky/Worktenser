@@ -22,18 +22,28 @@ class SignupButton extends StatelessWidget {
             ? const CircularProgressIndicator()
             : ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    fixedSize: const Size(200, 40),
-                    backgroundColor: AppColors.callToAction),
+                  fixedSize: const Size(300, 50),
+                  backgroundColor: AppColors.callToAction,
+                  textStyle: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
                 onPressed: () {
                   final signupData = SignupEntity(
                       email: emailController.value.text,
                       password: passwordController.value.text);
 
+                  FocusManager.instance.primaryFocus?.unfocus();
+
                   context
                       .read<SignupBloc>()
                       .add(SignupRequested(signupData: signupData));
                 },
-                child: const Text('SIGN UP'),
+                child: const Text('Sign up'),
               );
       },
     );

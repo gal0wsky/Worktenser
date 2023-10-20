@@ -11,6 +11,10 @@ import 'project_details_page.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  static Route get route {
+    return MaterialPageRoute(builder: (_) => const HomePage());
+  }
+
   static Page get page => const MaterialPage(child: HomePage());
 
   @override

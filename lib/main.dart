@@ -8,6 +8,8 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/bloc_observer.dart';
 import 'package:worktenser/config/routes.dart';
+import 'package:worktenser/features/auth/presentation/bloc/login/login_bloc.dart';
+import 'package:worktenser/features/auth/presentation/bloc/signup/signup_bloc.dart';
 import 'package:worktenser/features/projects/presentation/bloc/project_details/project_details_bloc.dart';
 import 'package:worktenser/features/timeCounter/presentation/bloc/time_counter/time_counter_bloc.dart';
 import 'package:worktenser/injection_container.dart';
@@ -92,6 +94,12 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         BlocProvider<AuthBloc>(
           create: (context) => sl(),
         ),
+        BlocProvider<LoginBloc>(
+          create: (context) => sl(),
+        ),
+        BlocProvider<SignupBloc>(
+          create: (context) => sl(),
+        ),
         BlocProvider<ProjectsBloc>(
           create: (context) => sl(),
         ),
@@ -113,25 +121,20 @@ class AppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _initializeAsyncDependencies(context),
-        builder: ((context, snapshot) {
-          return MaterialApp(
-            title: 'Worktenser',
-            home: FlowBuilder<AuthStatus>(
-              state: context.select((AuthBloc bloc) => bloc.state.status),
-              onGeneratePages: onGenerateAppViewPages,
-            ),
-          );
-        }));
+      future: _initializeAsyncDependencies(context),
+      builder: ((context, snapshot) {
+        return MaterialApp(
+          title: 'Worktenser',
+          home: FlowBuilder<AuthStatus>(
+            state: context.select((AuthBloc bloc) => bloc.state.status),
+            onGeneratePages: onGenerateAppViewPages,
+          ),
+        );
+      }),
+    );
   }
 }
 
 Future<void> _initializeAsyncDependencies(BuildContext context) async {
   await initializeTimeCounterService(sl());
-
-  final backgroundServiceRunning = await FlutterBackgroundService().isRunning();
-
-  if (backgroundServiceRunning) {
-    // context.read<TimeCounterBloc>().add(StartTimeCounter());
-  }
 }

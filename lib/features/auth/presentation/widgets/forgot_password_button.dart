@@ -9,14 +9,11 @@ class ForgotPasswordButton extends StatelessWidget {
     return TextButton(
       onPressed: () {},
       style: const ButtonStyle(),
-      child: const Padding(
-        padding: EdgeInsets.only(bottom: 94),
-        child: Text(
-          'Forgot password',
-          style: TextStyle(
-            fontSize: 14,
-            color: AppColors.callToAction,
-          ),
+      child: const Text(
+        'Forgot password',
+        style: TextStyle(
+          fontSize: 14,
+          color: AppColors.callToAction,
         ),
       ),
     );

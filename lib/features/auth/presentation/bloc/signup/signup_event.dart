@@ -15,3 +15,5 @@ class SignupRequested extends SignupEvent {
   @override
   List<Object> get props => [signupData];
 }
+
+class ResetState extends SignupEvent {}

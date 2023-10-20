@@ -37,6 +37,8 @@ class LoginButton extends StatelessWidget {
                       email: emailController.value.text,
                       password: passwordController.value.text);
 
+                  FocusManager.instance.primaryFocus?.unfocus();
+
                   context
                       .read<LoginBloc>()
                       .add(CredentialsLoginRequested(loginData: loginData));

@@ -16,6 +16,7 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
       : _signupWithCredentialsUseCase = signupWithCredentialsUseCase,
         super(SignupInitial()) {
     on<SignupRequested>(_onSignupRequested);
+    on<ResetState>(_onResetBlocState);
   }
 
   FutureOr<void> _onSignupRequested(
@@ -32,5 +33,9 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     } else {
       emit(SignupSuccessful());
     }
+  }
+
+  void _onResetBlocState(ResetState event, Emitter<SignupState> emit) {
+    emit(SignupInitial());
   }
 }

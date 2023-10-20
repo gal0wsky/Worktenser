@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/config/colors.dart';
 import 'package:worktenser/features/auth/presentation/bloc/login/login_bloc.dart';
+import 'package:worktenser/features/auth/presentation/bloc/signup/signup_bloc.dart';
+import 'package:worktenser/features/auth/presentation/pages/signup_page.dart';
 import 'package:worktenser/features/auth/presentation/widgets/email_input.dart';
 import 'package:worktenser/features/auth/presentation/widgets/forgot_password_button.dart';
 import 'package:worktenser/features/auth/presentation/widgets/google_signin_button.dart';
 import 'package:worktenser/features/auth/presentation/widgets/login_button.dart';
 import 'package:worktenser/features/auth/presentation/widgets/password_input.dart';
-import 'package:worktenser/injection_container.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
+
+  static Route get route {
+    return MaterialPageRoute(builder: (_) => const LoginPage());
+  }
 
   static Page get page => const MaterialPage(child: LoginPage());
 
@@ -19,11 +24,8 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.primary,
-      body: BlocProvider<LoginBloc>(
-        create: (context) => sl(),
-        child: Center(
-          child: LoginForm(),
-        ),
+      body: Center(
+        child: LoginForm(),
       ),
     );
   }
@@ -38,8 +40,13 @@ class LoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginState>(
-      listener: (context, state) {
+      listener: (ctx, state) {
         if (state is LoginError) {}
+
+        if (state is LoginSuccessful) {
+          // context.flow<Page>().update((state) => HomePage.page);
+          // Navigator.of(context).pushReplacement(HomePage.route);
+        }
       },
       child: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, state) {
@@ -77,7 +84,7 @@ class LoginForm extends StatelessWidget {
                       ),
                       PasswordInput(valueController: passwordController),
                       const SizedBox(
-                        height: 50,
+                        height: 100,
                       ),
                       LoginButton(
                         emailController: emailController,
@@ -93,43 +100,37 @@ class LoginForm extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Align(
+                Align(
                   alignment: Alignment.bottomCenter,
-                  child: ForgotPasswordButton(),
+                  child: Column(
+                    children: [
+                      const ForgotPasswordButton(),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: 94,
+                        ),
+                        child: TextButton(
+                          onPressed: () {
+                            context.read<SignupBloc>().add(ResetState());
+
+                            emailController.clear();
+                            passwordController.clear();
+
+                            Navigator.of(context).push<void>(SignupPage.route);
+                          },
+                          style: const ButtonStyle(),
+                          child: const Text(
+                            'Sign up',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                // const Text(
-                //   'Worktenser',
-                //   style: TextStyle(
-                //     fontSize: 40,
-                //     color: AppColors.textPrimary,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
-                // const SizedBox(
-                //   height: 120,
-                // ),
-                // EmailInput(
-                //   valueController: emailController,
-                // ),
-                // const SizedBox(
-                //   height: 16,
-                // ),
-                // PasswordInput(valueController: passwordController),
-                // const SizedBox(
-                //   height: 50,
-                // ),
-                // LoginButton(
-                //   emailController: emailController,
-                //   passwordController: passwordController,
-                // ),
-                // const SizedBox(
-                //   height: 20,
-                // ),
-                // const GoogleSignInButton(),
-                // const SizedBox(
-                //   height: 8,
-                // ),
-                // const ForgotPasswordButton(),
               ],
             ),
           );
