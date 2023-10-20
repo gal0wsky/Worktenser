@@ -65,16 +65,16 @@ class LoginForm extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text(
-                        'Worktenser',
-                        style: TextStyle(
-                          fontSize: 40,
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.bold,
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 100),
+                        child: Text(
+                          'Worktenser',
+                          style: TextStyle(
+                            fontSize: 40,
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 120,
                       ),
                       EmailInput(
                         valueController: emailController,
@@ -91,7 +91,7 @@ class LoginForm extends StatelessWidget {
                         passwordController: passwordController,
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 10,
                       ),
                       const GoogleSignInButton(),
                       const SizedBox(
@@ -107,7 +107,7 @@ class LoginForm extends StatelessWidget {
                       const ForgotPasswordButton(),
                       Padding(
                         padding: const EdgeInsets.only(
-                          bottom: 94,
+                          bottom: 84,
                         ),
                         child: TextButton(
                           onPressed: () {
