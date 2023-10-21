@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:worktenser/core/usecase/usecase.dart';
 import 'package:worktenser/features/timeCounter/domain/repository/time_counter_repository.dart';
 
@@ -11,6 +13,8 @@ class StopProjectTimeCounterUseCase extends UseCase<bool, void> {
   @override
   Future<bool> call({void params}) async {
     await _counterRepository.stop();
+
+    sleep(const Duration(milliseconds: 100));
 
     final isWorking = await _counterRepository.isWorking;
 

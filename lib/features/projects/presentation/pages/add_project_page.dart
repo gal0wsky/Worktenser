@@ -8,6 +8,10 @@ import 'package:worktenser/features/projects/presentation/bloc/projects/projects
 class AddProjectPage extends StatelessWidget {
   const AddProjectPage({super.key});
 
+  static Route get route {
+    return MaterialPageRoute(builder: (_) => const AddProjectPage());
+  }
+
   static Page get page => const MaterialPage(child: AddProjectPage());
 
   @override
