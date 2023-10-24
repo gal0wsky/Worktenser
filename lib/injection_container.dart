@@ -18,6 +18,7 @@ import 'package:worktenser/features/projects/domain/usecases/get_projects_total_
 import 'package:worktenser/features/projects/domain/usecases/load_local_copy.dart';
 import 'package:worktenser/features/projects/domain/usecases/load_projects.dart';
 import 'package:worktenser/features/projects/presentation/bloc/project_details/project_details_bloc.dart';
+import 'package:worktenser/features/searchbar/presentation/bloc/searchbar/searchbar_bloc.dart';
 import 'package:worktenser/features/timeCounter/data/repository/time_counter_repository_impl.dart';
 import 'package:worktenser/features/timeCounter/domain/repository/time_counter_repository.dart';
 import 'package:worktenser/features/timeCounter/domain/usecases/save_project_on_device.dart';
@@ -49,6 +50,8 @@ Future<void> initializeDependiencies() async {
   _registerTimeCounterDependencies(sharedPrefs);
 
   _registerProjectsDependencies(sharedPrefs);
+
+  _registerSearchbarDependencies();
 }
 
 void _registerAuthenticationDependencies() {
@@ -103,18 +106,18 @@ void _registerProjectsDependencies(SharedPreferences preferences) {
   sl.registerSingleton<LoadLocalCopyUseCase>(
       LoadLocalCopyUseCase(projectsLocalStorage: sl()));
 
-  sl.registerFactory<ProjectsBloc>(() => ProjectsBloc(
-        loadProjectsUsecase: sl(),
-        addProjectUseCase: sl(),
-        updateProjectUseCase: sl(),
-        deleteProjectUseCase: sl(),
-        getProjectsTotalTimeUseCase: sl(),
-        loadLocalCopyUseCase: sl(),
-        timeCounterBloc: sl(),
-      ));
+  sl.registerSingleton<ProjectsBloc>(ProjectsBloc(
+    loadProjectsUsecase: sl(),
+    addProjectUseCase: sl(),
+    updateProjectUseCase: sl(),
+    deleteProjectUseCase: sl(),
+    getProjectsTotalTimeUseCase: sl(),
+    loadLocalCopyUseCase: sl(),
+    timeCounterBloc: sl(),
+  ));
 
-  sl.registerFactory<ProjectDetailsBloc>(
-      () => ProjectDetailsBloc(timeCounterBloc: sl()));
+  sl.registerSingleton<ProjectDetailsBloc>(
+      ProjectDetailsBloc(timeCounterBloc: sl()));
 }
 
 void _registerTimeCounterDependencies(SharedPreferences preferences) {
@@ -155,4 +158,8 @@ void _registerTimeCounterDependencies(SharedPreferences preferences) {
     updateInFirestoreUseCase: sl(),
     saveProjectOnDeviceUseCase: sl(),
   ));
+}
+
+void _registerSearchbarDependencies() {
+  sl.registerFactory<SearchbarBloc>(() => SearchbarBloc(projectsBloc: sl()));
 }

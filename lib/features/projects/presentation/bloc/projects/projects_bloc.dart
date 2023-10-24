@@ -137,8 +137,8 @@ class ProjectsBloc extends Bloc<ProjectsEvent, ProjectsState> {
   }
 
   @override
-  Future<void> close() async {
-    await _counterSubscription.cancel();
+  Future<void> close() {
+    _counterSubscription.cancel();
     return super.close();
   }
 }
