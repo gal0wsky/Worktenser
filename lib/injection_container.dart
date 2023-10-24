@@ -5,10 +5,12 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worktenser/features/auth/data/repository/auth_repository_impl.dart';
 import 'package:worktenser/features/auth/domain/usecases/logout.dart';
+import 'package:worktenser/features/auth/domain/usecases/reset_password.dart';
 import 'package:worktenser/features/auth/domain/usecases/signin_with_credentials.dart';
 import 'package:worktenser/features/auth/domain/usecases/signin_with_google.dart';
 import 'package:worktenser/features/auth/domain/usecases/signup_with_credentials.dart';
 import 'package:worktenser/features/auth/presentation/bloc/login/login_bloc.dart';
+import 'package:worktenser/features/auth/presentation/bloc/resetPassword/reset_password_bloc.dart';
 import 'package:worktenser/features/projects/data/data_sources/local/projects_local_storage.dart';
 import 'package:worktenser/features/projects/data/data_sources/local/projects_local_storage_impl.dart';
 import 'package:worktenser/features/projects/data/repository/projects_repository_impl.dart';
@@ -71,6 +73,9 @@ void _registerAuthenticationDependencies() {
   sl.registerSingleton<LogoutUseCase>(
       LogoutUseCase(authRepository: sl(), projectsLocalStorage: sl()));
 
+  sl.registerSingleton<ResetPasswordUseCase>(
+      ResetPasswordUseCase(authRepository: sl()));
+
   // Blocs
   sl.registerFactory<AuthBloc>(() => AuthBloc(
         authRepository: sl(),
@@ -82,6 +87,9 @@ void _registerAuthenticationDependencies() {
 
   sl.registerFactory<LoginBloc>(() => LoginBloc(
       signinWithCredentialsUseCase: sl(), signinWithGoogleUseCase: sl()));
+
+  sl.registerFactory<ResetPasswordBloc>(
+      () => ResetPasswordBloc(resetPasswordUseCase: sl()));
 }
 
 void _registerProjectsDependencies(SharedPreferences preferences) {

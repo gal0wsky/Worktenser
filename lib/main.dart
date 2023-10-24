@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/bloc_observer.dart';
 import 'package:worktenser/config/routes.dart';
 import 'package:worktenser/features/auth/presentation/bloc/login/login_bloc.dart';
+import 'package:worktenser/features/auth/presentation/bloc/resetPassword/reset_password_bloc.dart';
 import 'package:worktenser/features/auth/presentation/bloc/signup/signup_bloc.dart';
 import 'package:worktenser/features/projects/presentation/bloc/project_details/project_details_bloc.dart';
 import 'package:worktenser/features/searchbar/presentation/bloc/searchbar/searchbar_bloc.dart';
@@ -99,6 +100,9 @@ class _AppState extends State<App> with WidgetsBindingObserver {
           create: (context) => sl(),
         ),
         BlocProvider<SignupBloc>(
+          create: (context) => sl(),
+        ),
+        BlocProvider<ResetPasswordBloc>(
           create: (context) => sl(),
         ),
         BlocProvider<ProjectsBloc>(

@@ -12,4 +12,5 @@ abstract class AuthRepository {
       {required LoginEntity loginInformation});
   Future<bool> signInWithGoogle();
   Future<bool> logOut();
+  Future<bool> resetPassword({required String email});
 }

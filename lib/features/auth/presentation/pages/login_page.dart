@@ -123,7 +123,7 @@ class LoginForm extends StatelessWidget {
                             'Sign up',
                             style: TextStyle(
                               fontSize: 14,
-                              color: AppColors.textPrimary,
+                              color: AppColors.callToAction,
                             ),
                           ),
                         ),
