@@ -57,8 +57,12 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               const Searchbar(),
-              BlocBuilder<SearchbarBloc, SearchbarState>(
-                  builder: (context, state) {
+              BlocConsumer<SearchbarBloc, SearchbarState>(
+                  listener: (context, state) {
+                if (state is SearchPhraseUpdated) {
+                  context.read<SearchbarBloc>().add(SearchForPhrase());
+                }
+              }, builder: (context, state) {
                 return Expanded(
                   child: ListView.builder(
                     itemCount: state.filteredProjects.length,

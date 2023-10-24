@@ -19,3 +19,10 @@ class SearchbarSearchApplied extends SearchbarState {
       required List<ProjectEntity> filteredProjects})
       : super(searchPhrase: searchPhrase, filteredProjects: filteredProjects);
 }
+
+class SearchPhraseUpdated extends SearchbarState {
+  const SearchPhraseUpdated(
+      {required String searchPhrase,
+      required List<ProjectEntity> filteredProjects})
+      : super(searchPhrase: searchPhrase, filteredProjects: filteredProjects);
+}

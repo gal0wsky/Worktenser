@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -20,18 +19,17 @@ class SearchbarBloc extends Bloc<SearchbarEvent, SearchbarState> {
     on<SearchForPhrase>(_onSearchForPhrase);
 
     _projectsSubscription = _projectsBloc.stream.listen((event) {
-      sleep(const Duration(milliseconds: 100));
       add(SearchForPhrase());
     });
   }
 
   void _onUpdateSearchPhrase(
       UpdateSearchPhrase event, Emitter<SearchbarState> emit) {
-    emit(SearchbarSearchApplied(
+    emit(SearchPhraseUpdated(
         searchPhrase: event.searchPhrase,
         filteredProjects: state.filteredProjects));
 
-    add(SearchForPhrase());
+    // add(SearchForPhrase());
   }
 
   void _onSearchForPhrase(SearchForPhrase event, Emitter<SearchbarState> emit) {
@@ -40,7 +38,7 @@ class SearchbarBloc extends Bloc<SearchbarEvent, SearchbarState> {
     List<ProjectEntity> filteredProjects = [];
 
     if (projectsState is ProjectsLoaded) {
-      if (state.searchPhrase.isEmpty || state.searchPhrase.contains(' ')) {
+      if (state.searchPhrase.isEmpty) {
         emit(SearchbarSearchApplied(
             searchPhrase: state.searchPhrase,
             filteredProjects: projectsState.projects));
