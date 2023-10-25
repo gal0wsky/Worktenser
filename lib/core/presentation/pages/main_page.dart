@@ -40,10 +40,10 @@ class _MainPageState extends State<MainPage> {
         padding: const EdgeInsets.only(
           left: 50,
           right: 50,
-          bottom: 20,
-          top: 15,
+          bottom: 15,
+          top: 10,
         ),
-        iconSize: 30,
+        iconSize: 25,
         tabs: const [
           GButton(icon: FontAwesomeIcons.solidRectangleList),
           GButton(icon: FontAwesomeIcons.solidSquarePlus),
