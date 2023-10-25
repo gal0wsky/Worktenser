@@ -5,6 +5,7 @@ import 'package:worktenser/features/auth/domain/entities/login.dart';
 import 'package:worktenser/features/auth/domain/entities/signup.dart';
 import 'package:worktenser/features/auth/domain/repository/auth_repository.dart';
 import 'package:worktenser/features/auth/domain/usecases/logout.dart';
+import 'package:worktenser/features/auth/domain/usecases/reset_password.dart';
 import 'package:worktenser/features/auth/domain/usecases/signin_with_credentials.dart';
 import 'package:worktenser/features/auth/domain/usecases/signin_with_google.dart';
 import 'package:worktenser/features/auth/domain/usecases/signup_with_credentials.dart';
@@ -133,6 +134,28 @@ void main() {
         authRepository: authRepoMock, projectsLocalStorage: localStorageMock);
 
     final result = await useCase.call();
+
+    expect(result, false);
+  });
+
+  test('Reset password successful usecase test', () async {
+    when(authRepoMock.resetPassword(email: 'fake@email.com'))
+        .thenAnswer((realInvocation) async => true);
+
+    final useCase = ResetPasswordUseCase(authRepository: authRepoMock);
+
+    final result = await useCase.call(params: 'fake@email.com');
+
+    expect(result, true);
+  });
+
+  test('Reset password usecase invalid test', () async {
+    when(authRepoMock.resetPassword(email: 'fake@email.com'))
+        .thenAnswer((realInvocation) async => false);
+
+    final useCase = ResetPasswordUseCase(authRepository: authRepoMock);
+
+    final result = await useCase.call(params: 'fake@email.com');
 
     expect(result, false);
   });

@@ -140,4 +140,26 @@ void main() {
 
     expect(result, false);
   });
+
+  test('Reset password successful test', () async {
+    when(firebaseAuthMock.sendPasswordResetEmail(email: 'fake@email.com'))
+        .thenAnswer((realInvocation) async => true);
+
+    final repo = AuthRepositoryImpl(firebaseAuth: firebaseAuthMock);
+
+    final result = await repo.resetPassword(email: 'fake@email.com');
+
+    expect(result, true);
+  });
+
+  test('Reset password catch exception test', () async {
+    when(firebaseAuthMock.sendPasswordResetEmail(email: 'fake@email.com'))
+        .thenThrow(Exception());
+
+    final repo = AuthRepositoryImpl(firebaseAuth: firebaseAuthMock);
+
+    final result = await repo.resetPassword(email: 'fake@email.com');
+
+    expect(result, false);
+  });
 }
