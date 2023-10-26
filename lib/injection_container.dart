@@ -32,6 +32,7 @@ import 'package:worktenser/features/timeCounter/presentation/bloc/time_counter/t
 import 'features/auth/domain/repository/auth_repository.dart';
 import 'features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'features/auth/presentation/bloc/signup/signup_bloc.dart';
+import 'features/navbar/presentation/bloc/navbar/navbar_bloc.dart';
 import 'features/projects/domain/usecases/delete_project.dart';
 import 'features/projects/domain/usecases/update_project.dart';
 import 'features/projects/presentation/bloc/projects/projects_bloc.dart';
@@ -54,6 +55,8 @@ Future<void> initializeDependiencies() async {
   _registerProjectsDependencies(sharedPrefs);
 
   _registerSearchbarDependencies();
+
+  _registerNavbarDependencies();
 }
 
 void _registerAuthenticationDependencies() {
@@ -170,4 +173,8 @@ void _registerTimeCounterDependencies(SharedPreferences preferences) {
 
 void _registerSearchbarDependencies() {
   sl.registerFactory<SearchbarBloc>(() => SearchbarBloc(projectsBloc: sl()));
+}
+
+void _registerNavbarDependencies() {
+  sl.registerSingleton<NavbarBloc>(NavbarBloc());
 }

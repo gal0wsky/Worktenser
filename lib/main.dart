@@ -11,6 +11,7 @@ import 'package:worktenser/config/routes.dart';
 import 'package:worktenser/features/auth/presentation/bloc/login/login_bloc.dart';
 import 'package:worktenser/features/auth/presentation/bloc/resetPassword/reset_password_bloc.dart';
 import 'package:worktenser/features/auth/presentation/bloc/signup/signup_bloc.dart';
+import 'package:worktenser/features/navbar/presentation/bloc/navbar/navbar_bloc.dart';
 import 'package:worktenser/features/projects/presentation/bloc/project_details/project_details_bloc.dart';
 import 'package:worktenser/features/searchbar/presentation/bloc/searchbar/searchbar_bloc.dart';
 import 'package:worktenser/features/timeCounter/presentation/bloc/time_counter/time_counter_bloc.dart';
@@ -115,6 +116,9 @@ class _AppState extends State<App> with WidgetsBindingObserver {
           create: (context) => sl(),
         ),
         BlocProvider<SearchbarBloc>(
+          create: (context) => sl(),
+        ),
+        BlocProvider<NavbarBloc>(
           create: (context) => sl(),
         ),
       ],

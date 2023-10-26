@@ -34,68 +34,77 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.primary,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 60, bottom: 20),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Projects',
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
+      body: BlocListener<ProjectsBloc, ProjectsState>(
+        listener: (context, state) {
+          if (state is ProjectsReloading) {
+            context
+                .read<ProjectsBloc>()
+                .add(LoadProjects(user: context.read<AuthBloc>().state.user));
+          }
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 60, bottom: 20),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Projects',
+                        style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
+                    ],
+                  ),
+                ),
+                const Searchbar(),
+                BlocConsumer<SearchbarBloc, SearchbarState>(
+                    listener: (context, state) {
+                  if (state is SearchPhraseUpdated) {
+                    context.read<SearchbarBloc>().add(SearchForPhrase());
+                  }
+                }, builder: (context, state) {
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: state.filteredProjects.length,
+                      shrinkWrap: true,
+                      itemBuilder: ((context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: ProjectTile(
+                              project: state.filteredProjects[index]),
+                        );
+                      }),
                     ),
-                  ],
-                ),
-              ),
-              const Searchbar(),
-              BlocConsumer<SearchbarBloc, SearchbarState>(
-                  listener: (context, state) {
-                if (state is SearchPhraseUpdated) {
-                  context.read<SearchbarBloc>().add(SearchForPhrase());
-                }
-              }, builder: (context, state) {
-                return Expanded(
-                  child: ListView.builder(
-                    itemCount: state.filteredProjects.length,
-                    shrinkWrap: true,
-                    itemBuilder: ((context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child:
-                            ProjectTile(project: state.filteredProjects[index]),
-                      );
-                    }),
+                  );
+                }),
+                ElevatedButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(AppLogoutRequested());
+                  },
+                  style: ElevatedButton.styleFrom(
+                    fixedSize: const Size(
+                      200,
+                      40,
+                    ),
+                    backgroundColor: AppColors.callToAction,
                   ),
-                );
-              }),
-              ElevatedButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(AppLogoutRequested());
-                },
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(
-                    200,
-                    40,
-                  ),
-                  backgroundColor: AppColors.callToAction,
-                ),
-                child: const Text(
-                  'Logout',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
+                  child: const Text(
+                    'Logout',
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

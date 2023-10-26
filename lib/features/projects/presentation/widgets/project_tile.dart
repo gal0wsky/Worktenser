@@ -6,8 +6,8 @@ import 'package:worktenser/features/projects/presentation/bloc/project_details/p
 import 'package:worktenser/features/projects/presentation/pages/project_details_page.dart';
 import 'package:worktenser/features/timeCounter/presentation/bloc/time_counter/time_counter_bloc.dart';
 
-import 'start_counter_button.dart';
-import 'stop_counter_button.dart';
+import 'small_start_counter_button.dart';
+import 'small_stop_counter_button.dart';
 
 class ProjectTile extends StatelessWidget {
   final ProjectEntity project;
@@ -60,10 +60,10 @@ class ProjectTile extends StatelessWidget {
 
                     if (state is TimeCounterWorking) {
                       if (state.project!.id == project.id) {
-                        return const StopCounterButton();
+                        return const SmallStopCounterButton();
                       }
                     }
-                    return const StartCounterButton();
+                    return const SmallStartCounterButton();
                   }),
                 ],
               ),
@@ -78,7 +78,7 @@ class ProjectTile extends StatelessWidget {
 
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => const DetailsPage(),
+            builder: (_) => DetailsPage(),
           ),
         );
       },

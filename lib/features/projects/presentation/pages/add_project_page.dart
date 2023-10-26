@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/config/colors.dart';
 import 'package:worktenser/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:worktenser/features/navbar/presentation/bloc/navbar/navbar_bloc.dart';
 import 'package:worktenser/features/projects/domain/entities/project.dart';
 import 'package:worktenser/features/projects/presentation/bloc/projects/projects_bloc.dart';
 
@@ -99,7 +100,10 @@ class AddProjectPage extends StatelessWidget {
                     context
                         .read<ProjectsBloc>()
                         .add(AddProject(project: project));
-                    Navigator.of(context).pop();
+
+                    context
+                        .read<NavbarBloc>()
+                        .add(const UpdatePageIndex(pageIndex: 0));
                   },
                   child: const Text('ADD'),
                 )
