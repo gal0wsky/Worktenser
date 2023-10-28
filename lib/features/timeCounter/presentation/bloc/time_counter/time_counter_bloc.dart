@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:worktenser/features/projects/data/models/project.dart';
 import 'package:worktenser/features/projects/domain/entities/project.dart';
 import 'package:worktenser/features/timeCounter/domain/usecases/save_project_on_device.dart';
 import 'package:worktenser/features/timeCounter/domain/usecases/start_counter.dart';
@@ -45,7 +46,7 @@ class TimeCounterBloc extends Bloc<TimeCounterEvent, TimeCounterState> {
     _receivePort.listen((updatedProject) {
       // debugPrint('New project time: ${updatedProject}');
       add(UpdateTimeCounterProject(
-          project: ProjectEntity.fromJson(updatedProject)));
+          project: ProjectModel.fromJson(json: updatedProject)));
     });
   }
 

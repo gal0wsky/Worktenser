@@ -9,6 +9,7 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:flutter_background_service_ios/flutter_background_service_ios.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:worktenser/core/util/project_time_formatter.dart';
 import 'package:worktenser/features/projects/data/models/project.dart';
 import 'package:worktenser/features/projects/domain/entities/project.dart';
 import 'package:worktenser/features/timeCounter/presentation/bloc/time_counter/time_counter_bloc.dart';
@@ -73,7 +74,7 @@ void _onStart(ServiceInstance service) async {
         service.setForegroundNotificationInfo(
           title: 'Working on ${project!.name}',
           content:
-              'Current time: ${ProjectModel.fromEntity(project!).printTime()}',
+              'Current time: ${printProjectTime(ProjectModel.fromEntity(project!))}',
         );
       }
 
@@ -81,12 +82,15 @@ void _onStart(ServiceInstance service) async {
         await _sendIosForegroundNotification(
           title: 'Working on ${project!.name}',
           body:
-              'Current time: ${ProjectModel.fromEntity(project!).printTime()}',
+              'Current time: ${printProjectTime(ProjectModel.fromEntity(project!))}',
         );
       }
 
       final sendPort = IsolateNameServer.lookupPortByName('timeCounter');
-      sendPort?.send(project!.toJson());
+
+      final projectModel = ProjectModel.fromEntity(project!);
+
+      sendPort?.send(projectModel.toJson());
     });
   }
 }
@@ -105,7 +109,7 @@ Future<void> _sendIosForegroundNotification(
 
 @pragma('vm:entry-point')
 void runCustomIsolate(Map<String, dynamic> json) {
-  ProjectEntity project = ProjectEntity.fromJson(json);
+  ProjectEntity project = ProjectModel.fromJson(json: json);
 
   Timer.periodic(const Duration(seconds: 1), (timer) {
     int newTime = project.time;
@@ -114,9 +118,13 @@ void runCustomIsolate(Map<String, dynamic> json) {
     project = project.copyWith(time: newTime);
 
     final sendPort = IsolateNameServer.lookupPortByName('timeCounter');
-    sendPort?.send(project.toJson());
 
-    debugPrint('Current project:\t ${project.toJson()}');
+    final projectModel = ProjectModel.fromEntity(project);
+
+    sendPort?.send(projectModel.toJson());
+
+    debugPrint(
+        'Current project:\t ${ProjectModel.fromEntity(project).toJson()}');
   });
 }
 
@@ -129,7 +137,7 @@ Future<ProjectEntity?> _loadProject() async {
     return null;
   } else {
     final projectJson = json.decode(jsonString);
-    final project = ProjectEntity.fromJson(projectJson);
+    final project = ProjectModel.fromJson(json: projectJson);
 
     return project;
   }

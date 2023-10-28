@@ -44,7 +44,6 @@ class ProjectModel extends ProjectEntity {
           time: json['time'],
           userId: json['userId']);
 
-  @override
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
         'name': name,
@@ -53,26 +52,13 @@ class ProjectModel extends ProjectEntity {
         'userId': userId
       };
 
-  String printTime() {
-    int time = this.time;
+  static List<Map<String, dynamic>> listToJson(List<ProjectEntity> list) {
+    List<Map<String, dynamic>> jsonList = [];
 
-    final hours = time ~/ 3600;
-    time = (time % 3600).toInt();
-    final minutes = time ~/ 60;
-    final seconds = time % 60;
+    for (ProjectEntity project in list) {
+      jsonList.add(ProjectModel.fromEntity(project).toJson());
+    }
 
-    final formattedTime =
-        _formatTime(hours: hours, minutes: minutes, seconds: seconds);
-
-    return formattedTime;
-  }
-
-  String _formatTime(
-      {required int hours, required int minutes, required int seconds}) {
-    final hoursStr = hours.toString().padLeft(2, '0');
-    final minutesStr = minutes.toString().padLeft(2, '0');
-    final secondsStr = seconds.toString().padLeft(2, '0');
-
-    return '$hoursStr:$minutesStr:$secondsStr';
+    return jsonList;
   }
 }

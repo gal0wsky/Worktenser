@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:worktenser/config/colors.dart';
+import 'package:worktenser/core/util/project_time_formatter.dart';
 import 'package:worktenser/features/projects/presentation/bloc/project_details/project_details_bloc.dart';
 import 'package:worktenser/features/projects/presentation/bloc/projects/projects_bloc.dart';
 import 'package:worktenser/features/projects/presentation/widgets/start_counter_button.dart';
@@ -134,7 +135,7 @@ class DetailsPage extends StatelessWidget {
                                     height: 16,
                                   ),
                                   Text(
-                                    state.project.printTime(),
+                                    printProjectTime(state.project),
                                     style: const TextStyle(
                                       color: AppColors.textPrimary,
                                       fontSize: 22,

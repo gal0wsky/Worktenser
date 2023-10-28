@@ -6,16 +6,15 @@
 import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:shared_preferences/shared_preferences.dart' as _i2;
-import 'package:worktenser/features/auth/domain/entities/user.dart' as _i6;
+import 'package:worktenser/features/auth/domain/entities/user.dart' as _i5;
 import 'package:worktenser/features/projects/data/data_sources/local/projects_local_storage.dart'
-    as _i8;
-import 'package:worktenser/features/projects/domain/entities/project.dart'
-    as _i5;
-import 'package:worktenser/features/projects/domain/repository/projects_repository.dart'
-    as _i4;
-import 'package:worktenser/features/timeCounter/domain/repository/time_counter_repository.dart'
     as _i7;
+import 'package:worktenser/features/projects/domain/entities/project.dart'
+    as _i4;
+import 'package:worktenser/features/projects/domain/repository/projects_repository.dart'
+    as _i2;
+import 'package:worktenser/features/timeCounter/domain/repository/time_counter_repository.dart'
+    as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -28,213 +27,25 @@ import 'package:worktenser/features/timeCounter/domain/repository/time_counter_r
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-/// A class which mocks [SharedPreferences].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockSharedPreferences extends _i1.Mock implements _i2.SharedPreferences {
-  @override
-  Set<String> getKeys() => (super.noSuchMethod(
-        Invocation.method(
-          #getKeys,
-          [],
-        ),
-        returnValue: <String>{},
-        returnValueForMissingStub: <String>{},
-      ) as Set<String>);
-  @override
-  Object? get(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #get,
-          [key],
-        ),
-        returnValueForMissingStub: null,
-      ) as Object?);
-  @override
-  bool? getBool(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #getBool,
-          [key],
-        ),
-        returnValueForMissingStub: null,
-      ) as bool?);
-  @override
-  int? getInt(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #getInt,
-          [key],
-        ),
-        returnValueForMissingStub: null,
-      ) as int?);
-  @override
-  double? getDouble(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #getDouble,
-          [key],
-        ),
-        returnValueForMissingStub: null,
-      ) as double?);
-  @override
-  String? getString(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #getString,
-          [key],
-        ),
-        returnValueForMissingStub: null,
-      ) as String?);
-  @override
-  bool containsKey(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #containsKey,
-          [key],
-        ),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
-  @override
-  List<String>? getStringList(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #getStringList,
-          [key],
-        ),
-        returnValueForMissingStub: null,
-      ) as List<String>?);
-  @override
-  _i3.Future<bool> setBool(
-    String? key,
-    bool? value,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setBool,
-          [
-            key,
-            value,
-          ],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-  @override
-  _i3.Future<bool> setInt(
-    String? key,
-    int? value,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setInt,
-          [
-            key,
-            value,
-          ],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-  @override
-  _i3.Future<bool> setDouble(
-    String? key,
-    double? value,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setDouble,
-          [
-            key,
-            value,
-          ],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-  @override
-  _i3.Future<bool> setString(
-    String? key,
-    String? value,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setString,
-          [
-            key,
-            value,
-          ],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-  @override
-  _i3.Future<bool> setStringList(
-    String? key,
-    List<String>? value,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setStringList,
-          [
-            key,
-            value,
-          ],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-  @override
-  _i3.Future<bool> remove(String? key) => (super.noSuchMethod(
-        Invocation.method(
-          #remove,
-          [key],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-  @override
-  _i3.Future<bool> commit() => (super.noSuchMethod(
-        Invocation.method(
-          #commit,
-          [],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-  @override
-  _i3.Future<bool> clear() => (super.noSuchMethod(
-        Invocation.method(
-          #clear,
-          [],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-  @override
-  _i3.Future<void> reload() => (super.noSuchMethod(
-        Invocation.method(
-          #reload,
-          [],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
-}
-
 /// A class which mocks [ProjectsRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockProjectsRepository extends _i1.Mock
-    implements _i4.ProjectsRepository {
+    implements _i2.ProjectsRepository {
   @override
-  _i3.Future<List<_i5.ProjectEntity>> loadProjects(_i6.UserEntity? user) =>
+  _i3.Future<List<_i4.ProjectEntity>> loadProjects(_i5.UserEntity? user) =>
       (super.noSuchMethod(
         Invocation.method(
           #loadProjects,
           [user],
         ),
         returnValue:
-            _i3.Future<List<_i5.ProjectEntity>>.value(<_i5.ProjectEntity>[]),
+            _i3.Future<List<_i4.ProjectEntity>>.value(<_i4.ProjectEntity>[]),
         returnValueForMissingStub:
-            _i3.Future<List<_i5.ProjectEntity>>.value(<_i5.ProjectEntity>[]),
-      ) as _i3.Future<List<_i5.ProjectEntity>>);
+            _i3.Future<List<_i4.ProjectEntity>>.value(<_i4.ProjectEntity>[]),
+      ) as _i3.Future<List<_i4.ProjectEntity>>);
   @override
-  _i3.Future<bool> addProject(_i5.ProjectEntity? project) =>
+  _i3.Future<bool> addProject(_i4.ProjectEntity? project) =>
       (super.noSuchMethod(
         Invocation.method(
           #addProject,
@@ -244,7 +55,7 @@ class MockProjectsRepository extends _i1.Mock
         returnValueForMissingStub: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
   @override
-  _i3.Future<bool> updateProject(_i5.ProjectEntity? project) =>
+  _i3.Future<bool> updateProject(_i4.ProjectEntity? project) =>
       (super.noSuchMethod(
         Invocation.method(
           #updateProject,
@@ -254,7 +65,7 @@ class MockProjectsRepository extends _i1.Mock
         returnValueForMissingStub: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
   @override
-  _i3.Future<bool> deleteProject(_i5.ProjectEntity? project) =>
+  _i3.Future<bool> deleteProject(_i4.ProjectEntity? project) =>
       (super.noSuchMethod(
         Invocation.method(
           #deleteProject,
@@ -264,7 +75,7 @@ class MockProjectsRepository extends _i1.Mock
         returnValueForMissingStub: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
   @override
-  int getProjectsTotalTime(List<_i5.ProjectEntity>? projects) =>
+  int getProjectsTotalTime(List<_i4.ProjectEntity>? projects) =>
       (super.noSuchMethod(
         Invocation.method(
           #getProjectsTotalTime,
@@ -279,7 +90,7 @@ class MockProjectsRepository extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTimeCounterRepository extends _i1.Mock
-    implements _i7.TimeCounterRepository {
+    implements _i6.TimeCounterRepository {
   @override
   _i3.Future<bool> get isWorking => (super.noSuchMethod(
         Invocation.getter(#isWorking),
@@ -304,24 +115,34 @@ class MockTimeCounterRepository extends _i1.Mock
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
+  @override
+  _i3.Future<bool> saveProjectOnDevice(_i4.ProjectEntity? project) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #saveProjectOnDevice,
+          [project],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+        returnValueForMissingStub: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
 }
 
 /// A class which mocks [ProjectsLocalStorage].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockProjectsLocalStorage extends _i1.Mock
-    implements _i8.ProjectsLocalStorage {
+    implements _i7.ProjectsLocalStorage {
   @override
-  List<_i5.ProjectEntity> load() => (super.noSuchMethod(
+  List<_i4.ProjectEntity> load() => (super.noSuchMethod(
         Invocation.method(
           #load,
           [],
         ),
-        returnValue: <_i5.ProjectEntity>[],
-        returnValueForMissingStub: <_i5.ProjectEntity>[],
-      ) as List<_i5.ProjectEntity>);
+        returnValue: <_i4.ProjectEntity>[],
+        returnValueForMissingStub: <_i4.ProjectEntity>[],
+      ) as List<_i4.ProjectEntity>);
   @override
-  _i3.Future<bool> add(_i5.ProjectEntity? project) => (super.noSuchMethod(
+  _i3.Future<bool> add(_i4.ProjectEntity? project) => (super.noSuchMethod(
         Invocation.method(
           #add,
           [project],
@@ -330,7 +151,7 @@ class MockProjectsLocalStorage extends _i1.Mock
         returnValueForMissingStub: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
   @override
-  _i3.Future<bool> save(List<_i5.ProjectEntity>? projects) =>
+  _i3.Future<bool> save(List<_i4.ProjectEntity>? projects) =>
       (super.noSuchMethod(
         Invocation.method(
           #save,
@@ -340,7 +161,7 @@ class MockProjectsLocalStorage extends _i1.Mock
         returnValueForMissingStub: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
   @override
-  _i3.Future<bool> update(_i5.ProjectEntity? project) => (super.noSuchMethod(
+  _i3.Future<bool> update(_i4.ProjectEntity? project) => (super.noSuchMethod(
         Invocation.method(
           #update,
           [project],
@@ -349,7 +170,7 @@ class MockProjectsLocalStorage extends _i1.Mock
         returnValueForMissingStub: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
   @override
-  _i3.Future<bool> delete(_i5.ProjectEntity? project) => (super.noSuchMethod(
+  _i3.Future<bool> delete(_i4.ProjectEntity? project) => (super.noSuchMethod(
         Invocation.method(
           #delete,
           [project],

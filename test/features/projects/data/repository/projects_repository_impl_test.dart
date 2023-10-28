@@ -38,9 +38,13 @@ void main() {
   );
 
   test('Load projects', () async {
-    await firestoreMock.collection('projects').add(fakeProj1.toJson());
+    await firestoreMock
+        .collection('projects')
+        .add(ProjectModel.fromEntity(fakeProj1).toJson());
 
-    await firestoreMock.collection('projects').add(fakeProj2.toJson());
+    await firestoreMock
+        .collection('projects')
+        .add(ProjectModel.fromEntity(fakeProj2).toJson());
 
     final repo = ProjectsRepositoryImpl(firestore: firestoreMock);
 
@@ -91,8 +95,12 @@ void main() {
   });
 
   test('Delete project valid', () async {
-    await firestoreMock.collection('projects').add(fakeProj1.toJson());
-    await firestoreMock.collection('projects').add(fakeProj2.toJson());
+    await firestoreMock
+        .collection('projects')
+        .add(ProjectModel.fromEntity(fakeProj1).toJson());
+    await firestoreMock
+        .collection('projects')
+        .add(ProjectModel.fromEntity(fakeProj2).toJson());
 
     final repo = ProjectsRepositoryImpl(firestore: firestoreMock);
 

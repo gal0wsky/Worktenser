@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worktenser/features/projects/data/data_sources/local/projects_local_storage.dart';
 import 'package:worktenser/features/projects/domain/entities/project.dart';
 import 'package:worktenser/features/projects/domain/repository/projects_repository.dart';
@@ -17,13 +14,11 @@ import 'package:worktenser/features/timeCounter/domain/usecases/update_local_cop
 import 'time_counter_usecases_test.mocks.dart';
 
 @GenerateNiceMocks([
-  MockSpec<SharedPreferences>(),
   MockSpec<ProjectsRepository>(),
   MockSpec<TimeCounterRepository>(),
   MockSpec<ProjectsLocalStorage>(),
 ])
 void main() {
-  final sharedPrefsMock = MockSharedPreferences();
   final projectsRepoMock = MockProjectsRepository();
   final counterRepoMock = MockTimeCounterRepository();
   final localStorageMock = MockProjectsLocalStorage();
@@ -76,11 +71,11 @@ void main() {
   });
 
   test('Save on device usecase test', () async {
-    when(sharedPrefsMock.setString(
-            'timeCounterProject', json.encode(fakeProj.toJson())))
+    when(counterRepoMock.saveProjectOnDevice(fakeProj))
         .thenAnswer((realInvocation) async => true);
 
-    final useCase = SaveProjectOnDeviceUseCase(preferences: sharedPrefsMock);
+    final useCase =
+        SaveProjectOnDeviceUseCase(counterRepository: counterRepoMock);
 
     final result = await useCase.call(params: fakeProj);
 
@@ -88,10 +83,11 @@ void main() {
   });
 
   test('Save on device usecase invalid test', () async {
-    when(sharedPrefsMock.setString('timeCounterProject', any))
+    when(counterRepoMock.saveProjectOnDevice(fakeProj))
         .thenAnswer((realInvocation) async => false);
 
-    final useCase = SaveProjectOnDeviceUseCase(preferences: sharedPrefsMock);
+    final useCase =
+        SaveProjectOnDeviceUseCase(counterRepository: counterRepoMock);
 
     final result = await useCase.call(params: fakeProj);
 

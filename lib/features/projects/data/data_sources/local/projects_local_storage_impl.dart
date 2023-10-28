@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:worktenser/features/projects/data/models/project.dart';
 import 'package:worktenser/features/projects/domain/entities/project.dart';
 
 import 'projects_local_storage.dart';
@@ -38,7 +39,8 @@ class ProjectsLocalStorageImpl implements ProjectsLocalStorage {
 
   @override
   Future<bool> save(List<ProjectEntity> projects) async {
-    final result = await _prefs.setString(_key, json.encode(projects));
+    final result = await _prefs.setString(
+        _key, json.encode(ProjectModel.listToJson(projects)));
 
     return result;
   }
@@ -87,7 +89,8 @@ class ProjectsLocalStorageImpl implements ProjectsLocalStorage {
 
     json
         .decode(jsonData)
-        .map((projectJson) => projects.add(ProjectEntity.fromJson(projectJson)))
+        .map((projectJson) =>
+            projects.add(ProjectModel.fromJson(json: projectJson)))
         .toList();
 
     return projects;

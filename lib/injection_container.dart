@@ -133,7 +133,8 @@ void _registerProjectsDependencies(SharedPreferences preferences) {
 
 void _registerTimeCounterDependencies(SharedPreferences preferences) {
   // Dependencies
-  sl.registerSingleton<TimeCounterRepository>(TimeCounterRepositoryImpl());
+  sl.registerSingleton<TimeCounterRepository>(
+      TimeCounterRepositoryImpl(preferences: preferences));
 
   sl.registerSingleton<ReceivePort>(ReceivePort());
 
@@ -157,7 +158,7 @@ void _registerTimeCounterDependencies(SharedPreferences preferences) {
       UpdateLocalCopyUseCase(projectsLocalStorage: sl()));
 
   sl.registerSingleton<SaveProjectOnDeviceUseCase>(
-      SaveProjectOnDeviceUseCase(preferences: preferences));
+      SaveProjectOnDeviceUseCase(counterRepository: sl()));
 
   // Bloc
   sl.registerSingleton<TimeCounterBloc>(TimeCounterBloc(

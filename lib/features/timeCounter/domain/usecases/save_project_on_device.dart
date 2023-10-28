@@ -1,18 +1,15 @@
-import 'dart:convert';
-
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worktenser/core/usecase/usecase.dart';
 import 'package:worktenser/features/projects/domain/entities/project.dart';
+import 'package:worktenser/features/timeCounter/domain/repository/time_counter_repository.dart';
 
 class SaveProjectOnDeviceUseCase extends UseCase<bool, ProjectEntity> {
-  final SharedPreferences _preferences;
-  final String _key = 'timeCounterProject';
+  final TimeCounterRepository _counterRepository;
 
-  SaveProjectOnDeviceUseCase({required SharedPreferences preferences})
-      : _preferences = preferences;
+  SaveProjectOnDeviceUseCase({required TimeCounterRepository counterRepository})
+      : _counterRepository = counterRepository;
 
   @override
   Future<bool> call({ProjectEntity? params}) {
-    return _preferences.setString(_key, json.encode(params!.toJson()));
+    return _counterRepository.saveProjectOnDevice(params!);
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/config/colors.dart';
+import 'package:worktenser/core/util/project_time_formatter.dart';
 import 'package:worktenser/features/projects/domain/entities/project.dart';
 import 'package:worktenser/features/projects/presentation/bloc/project_details/project_details_bloc.dart';
 import 'package:worktenser/features/projects/presentation/pages/project_details_page.dart';
@@ -46,7 +47,7 @@ class ProjectTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    project.printTime(),
+                    printProjectTime(project),
                     style: const TextStyle(
                       color: AppColors.textPrimary,
                       fontSize: 22,

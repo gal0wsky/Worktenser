@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worktenser/features/auth/domain/entities/user.dart';
 import 'package:worktenser/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:worktenser/features/projects/data/data_sources/local/projects_local_storage_impl.dart';
+import 'package:worktenser/features/projects/data/models/project.dart';
 import 'package:worktenser/features/projects/domain/entities/project.dart';
 
 import 'projects_local_storage_impl_test.mocks.dart';
@@ -39,7 +40,10 @@ void main() {
   setUp(() => storage = ProjectsLocalStorageImpl(preferences: prefsMock));
 
   test('Load projects successful', () {
-    final fakeProjects = [fakeProj1.toJson(), fakeProj2.toJson()];
+    final fakeProjects = [
+      ProjectModel.fromEntity(fakeProj1).toJson(),
+      ProjectModel.fromEntity(fakeProj2).toJson()
+    ];
 
     when(prefsMock.getString('worktenser.projects'))
         .thenAnswer((realInvocation) => json.encode(fakeProjects));
@@ -48,7 +52,10 @@ void main() {
 
     expect(result, isNotEmpty);
     expect(result.length, 2);
-    expect(result, [fakeProj1, fakeProj2]);
+    expect(result, [
+      ProjectModel.fromEntity(fakeProj1),
+      ProjectModel.fromEntity(fakeProj2)
+    ]);
   });
 
   test('Load projects invalid', () {
@@ -62,7 +69,8 @@ void main() {
   });
 
   test('Add project successful', () async {
-    when(prefsMock.setString(storageKey, json.encode([fakeProj1])))
+    when(prefsMock.setString(
+            storageKey, json.encode([ProjectModel.fromEntity(fakeProj1)])))
         .thenAnswer((realInvocation) async => true);
 
     final result = await storage.add(fakeProj1);
@@ -71,7 +79,8 @@ void main() {
   });
 
   test('Add project invalid', () async {
-    when(prefsMock.setString(storageKey, json.encode([fakeProj1])))
+    when(prefsMock.setString(
+            storageKey, json.encode([ProjectModel.fromEntity(fakeProj1)])))
         .thenAnswer((realInvocation) async => false);
 
     final result = await storage.add(fakeProj1);
@@ -82,7 +91,8 @@ void main() {
   test('Save projects successful', () async {
     final fakeProjects = [fakeProj1, fakeProj2];
 
-    when(prefsMock.setString(storageKey, json.encode(fakeProjects)))
+    when(prefsMock.setString(
+            storageKey, json.encode(ProjectModel.listToJson(fakeProjects))))
         .thenAnswer((realInvocation) async => true);
 
     final result = await storage.save(fakeProjects);
@@ -93,7 +103,8 @@ void main() {
   test('Save projects invalid', () async {
     final fakeProjects = [fakeProj1, fakeProj2];
 
-    when(prefsMock.setString(storageKey, json.encode(fakeProjects)))
+    when(prefsMock.setString(
+            storageKey, json.encode(ProjectModel.listToJson(fakeProjects))))
         .thenAnswer((realInvocation) async => false);
 
     final result = await storage.save(fakeProjects);
@@ -107,10 +118,12 @@ void main() {
     final storedProjects = [fakeProj1, fakeProj2];
     final fakeProjects = [fakeProj1, fakeProj3];
 
-    when(prefsMock.getString('worktenser.projects'))
-        .thenAnswer((realInvocation) => json.encode(storedProjects));
+    when(prefsMock.getString('worktenser.projects')).thenAnswer(
+        (realInvocation) =>
+            json.encode(ProjectModel.listToJson(storedProjects)));
 
-    when(prefsMock.setString(storageKey, json.encode(fakeProjects)))
+    when(prefsMock.setString(
+            storageKey, json.encode(ProjectModel.listToJson(fakeProjects))))
         .thenAnswer((realInvocation) async => true);
 
     final result = await storage.update(fakeProj3);
@@ -124,10 +137,12 @@ void main() {
     final storedProjects = [fakeProj1, fakeProj2];
     final fakeProjects = [fakeProj1, fakeProj3];
 
-    when(prefsMock.getString('worktenser.projects'))
-        .thenAnswer((realInvocation) => json.encode(storedProjects));
+    when(prefsMock.getString('worktenser.projects')).thenAnswer(
+        (realInvocation) =>
+            json.encode(ProjectModel.listToJson(storedProjects)));
 
-    when(prefsMock.setString(storageKey, json.encode(fakeProjects)))
+    when(prefsMock.setString(
+            storageKey, json.encode(ProjectModel.listToJson(fakeProjects))))
         .thenAnswer((realInvocation) async => false);
 
     final result = await storage.update(fakeProj3);
@@ -143,7 +158,8 @@ void main() {
     when(prefsMock.getString('worktenser.projects'))
         .thenAnswer((realInvocation) => json.encode([]));
 
-    when(prefsMock.setString(storageKey, json.encode(fakeProjects)))
+    when(prefsMock.setString(
+            storageKey, json.encode(ProjectModel.listToJson(fakeProjects))))
         .thenAnswer((realInvocation) async => false);
 
     final result = await storage.update(fakeProj3);
@@ -152,10 +168,14 @@ void main() {
   });
 
   test('Delete project successful', () async {
-    when(prefsMock.getString('worktenser.projects'))
-        .thenAnswer((realInvocation) => json.encode([fakeProj1, fakeProj2]));
+    when(prefsMock.getString('worktenser.projects')).thenAnswer(
+        (realInvocation) => json.encode([
+              ProjectModel.fromEntity(fakeProj1),
+              ProjectModel.fromEntity(fakeProj2)
+            ]));
 
-    when(prefsMock.setString(storageKey, json.encode([fakeProj2])))
+    when(prefsMock.setString(
+            storageKey, json.encode([ProjectModel.fromEntity(fakeProj2)])))
         .thenAnswer((realInvocation) async => true);
 
     final result = await storage.delete(fakeProj1);
@@ -164,10 +184,14 @@ void main() {
   });
 
   test('Delete project successful', () async {
-    when(prefsMock.getString('worktenser.projects'))
-        .thenAnswer((realInvocation) => json.encode([fakeProj1, fakeProj2]));
+    when(prefsMock.getString('worktenser.projects')).thenAnswer(
+        (realInvocation) => json.encode([
+              ProjectModel.fromEntity(fakeProj1),
+              ProjectModel.fromEntity(fakeProj2)
+            ]));
 
-    when(prefsMock.setString(storageKey, json.encode([fakeProj2])))
+    when(prefsMock.setString(
+            storageKey, json.encode([ProjectModel.fromEntity(fakeProj2)])))
         .thenAnswer((realInvocation) async => false);
 
     final result = await storage.delete(fakeProj1);
