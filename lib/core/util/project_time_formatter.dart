@@ -22,3 +22,15 @@ String _formatProjectTime(
 
   return '$hoursStr:$minutesStr:$secondsStr';
 }
+
+String printTotalProjectsTime(int time) {
+  final hours = time ~/ 3600;
+  time = (time % 3600).toInt();
+  final minutes = time ~/ 60;
+  final seconds = time % 60;
+
+  final formattedTime =
+      _formatProjectTime(hours: hours, minutes: minutes, seconds: seconds);
+
+  return formattedTime;
+}

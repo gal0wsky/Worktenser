@@ -78,13 +78,13 @@ void _onStart(ServiceInstance service) async {
         );
       }
 
-      if (service is IOSServiceInstance) {
-        await _sendIosForegroundNotification(
-          title: 'Working on ${project!.name}',
-          body:
-              'Current time: ${printProjectTime(ProjectModel.fromEntity(project!))}',
-        );
-      }
+      // if (service is IOSServiceInstance) {
+      //   await _sendIosForegroundNotification(
+      //     title: 'Working on ${project!.name}',
+      //     body:
+      //         'Current time: ${printProjectTime(ProjectModel.fromEntity(project!))}',
+      //   );
+      // }
 
       final sendPort = IsolateNameServer.lookupPortByName('timeCounter');
 

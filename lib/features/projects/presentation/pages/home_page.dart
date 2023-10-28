@@ -85,24 +85,6 @@ class HomePage extends StatelessWidget {
                     ),
                   );
                 }),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<AuthBloc>().add(AppLogoutRequested());
-                  },
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: const Size(
-                      200,
-                      40,
-                    ),
-                    backgroundColor: AppColors.callToAction,
-                  ),
-                  child: const Text(
-                    'Logout',
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ),
               ],
             ),
           ),

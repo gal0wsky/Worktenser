@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:worktenser/features/projects/presentation/pages/add_project_page.dart';
 import 'package:worktenser/features/projects/presentation/pages/home_page.dart';
+import 'package:worktenser/features/userProfile/presentation/pages/profile_page.dart';
 
 part 'navbar_event.dart';
 part 'navbar_state.dart';

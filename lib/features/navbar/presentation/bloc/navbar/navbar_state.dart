@@ -6,7 +6,7 @@ class NavbarState extends Equatable {
 
   const NavbarState(
       {this.pageIndex = 0,
-      this.pages = const [HomePage(), AddProjectPage(), HomePage()]});
+      this.pages = const [HomePage(), AddProjectPage(), ProfilePage()]});
 
   @override
   List<Object> get props => [pageIndex, pages];

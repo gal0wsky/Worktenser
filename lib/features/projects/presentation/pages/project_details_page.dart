@@ -64,20 +64,18 @@ class DetailsPage extends StatelessWidget {
                               surfaceTintColor: AppColors.primary,
                               itemBuilder: (BuildContext context) => [
                                 PopupMenuItem(
-                                  child: GestureDetector(
-                                    child: const Text(
-                                      'Edit',
-                                      style: TextStyle(
-                                        color: AppColors.textPrimary,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                      ),
+                                  child: const Text(
+                                    'Edit',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: AppColors.textPrimary,
                                     ),
-                                    onTap: () => Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => EditProjectPage(
-                                            project: detailsState.project),
-                                      ),
+                                  ),
+                                  onTap: () => Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => EditProjectPage(
+                                          project: detailsState.project),
                                     ),
                                   ),
                                 ),
