@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -26,11 +28,11 @@ class MainPage extends StatelessWidget {
             activeColor: AppColors.callToAction,
             backgroundColor: AppColors.secondary,
             color: AppColors.textSecondary,
-            padding: const EdgeInsets.only(
+            padding: EdgeInsets.only(
               left: 50,
               right: 50,
-              bottom: 15,
-              top: 10,
+              bottom: Platform.isAndroid ? 15 : 30,
+              top: Platform.isAndroid ? 10 : 20,
             ),
             iconSize: 25,
             tabs: const [

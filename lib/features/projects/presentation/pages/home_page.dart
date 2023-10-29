@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:worktenser/config/colors.dart';
@@ -48,9 +50,10 @@ class HomePage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 60, bottom: 20),
-                  child: Row(
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: Platform.isAndroid ? 60 : 80, bottom: 20),
+                  child: const Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
